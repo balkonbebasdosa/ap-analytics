@@ -2,6 +2,7 @@ import { spawn, ChildProcess } from "child_process";
 import path from "path";
 import { EventEmitter } from "events";
 import { fetchZoneLive, type ZoneResult } from "./zoneService";
+import { getBusinessFeedback } from "./feedbackGenerator";
 
 export type { ZoneResult };
 
@@ -50,8 +51,8 @@ export interface AnalysisResult {
   zone?: ZoneResult;
 }
 
-const ML_TIMEOUT_MS = 60_000;
-const ZONE_TIMEOUT_MS = 3_000;
+const ML_TIMEOUT_MS = 60000;
+const ZONE_TIMEOUT_MS = 3000;
 
 let pythonProcess: ChildProcess | null = null;
 const eventEmitter = new EventEmitter();
@@ -147,11 +148,10 @@ export async function runMLAnalysis(input: MLAnalysisInput): Promise<AnalysisRes
           pricing: ["Monitor local averages closely"],
           marketing: ["Focus on localized outreach"],
         },
-        summary: `Based on a local ML analysis, the business has a success score of ${Math.round(preds.success_score)}/100. Consider the score breakdown for targeted improvements.`,
+        summary: getBusinessFeedback(input.concept, Math.round(preds.success_score)),
         zone: pythonZone,
       };
 
-      // Try live RDTR zone lookup — overrides Python GeoPandas zone if successful
       fetchZoneLive(lat, lng)
         .then((liveZone) => {
           resolve({
@@ -240,3 +240,4 @@ export async function runZoneClassification(lat: number, lng: number): Promise<Z
     }) + "\n");
   });
 }
+
