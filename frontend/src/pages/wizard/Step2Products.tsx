@@ -24,7 +24,7 @@ export default function Step2Products() {
   const handleNext = () => {
     const valid = products.filter((p) => p.name.trim() && p.price > 0);
     if (valid.length === 0) {
-      setError("Add at least one product or service with a name and price.");
+      setError("Tambahkan setidaknya satu produk atau layanan dengan nama dan harga.");
       return;
     }
     updateData({ products: valid });
@@ -35,9 +35,9 @@ export default function Step2Products() {
     <div className="space-y-10">
       {/* ── Heading ─────────────────────────────────────────────────────── */}
       <div>
-        <h2 className="text-lg font-bold text-foreground">Input your product name!</h2>
+        <h2 className="text-lg font-bold text-foreground">Masukkan nama produk Anda!</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          List your key offerings with their prices (IDR). You can add multiple products.
+          Daftarkan produk/layanan utama dengan harga (IDR). Anda bisa menambahkan beberapa produk.
         </p>
       </div>
 
@@ -49,7 +49,7 @@ export default function Step2Products() {
             <div className="flex flex-1 items-center gap-2 rounded-2xl border border-card-border bg-white px-4 py-3 shadow-sm focus-within:border-foreground focus-within:ring-1 focus-within:ring-foreground transition-all">
               <input
                 type="text"
-                placeholder={`Product ${i + 1} name, e.g. Signature Latte`}
+                placeholder={`Nama produk ${i + 1} — mis. Kopi Susu Spesial`}
                 value={product.name}
                 onChange={(e) => updateProduct(i, "name", e.target.value)}
                 className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground/50"
@@ -88,7 +88,7 @@ export default function Step2Products() {
         className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-card-border py-3 text-sm font-medium text-muted-foreground transition-colors hover:border-foreground/30 hover:text-foreground"
       >
         <Plus className="h-4 w-4" />
-        Add another item
+        Tambah item lain
       </button>
 
       {error && (
@@ -103,13 +103,13 @@ export default function Step2Products() {
           onClick={() => setStep(1)}
           className="flex items-center gap-2 rounded-full border border-card-border px-6 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
         >
-          <ArrowLeft className="h-4 w-4" /> Back
+          <ArrowLeft className="h-4 w-4" /> Kembali
         </button>
         <button
           onClick={handleNext}
           className="flex items-center gap-2 rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-80"
         >
-          Continue <ArrowRight className="h-4 w-4" />
+          Lanjutkan <ArrowRight className="h-4 w-4" />
         </button>
       </div>
     </div>

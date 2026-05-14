@@ -20,7 +20,7 @@ const easing = "var(--transition-color-easing)";
 
 /* ── 01 · Describe your business — a form filling itself in ────────────── */
 function DescribeBusinessDemo({ active }: { active: boolean }) {
-  const categories = ["F&B", "Retail", "Service"];
+  const categories = ["M&M", "Ritel", "Jasa"];
   return (
     <div
       style={{
@@ -29,7 +29,7 @@ function DescribeBusinessDemo({ active }: { active: boolean }) {
       }}
     >
       <div>
-        <div style={{ ...monoLabel, color: "var(--deep)", opacity: 0.5, marginBottom: 4 }}>Business name</div>
+        <div style={{ ...monoLabel, color: "var(--deep)", opacity: 0.5, marginBottom: 4 }}>Nama bisnis</div>
         <div
           style={{
             background: "var(--cream)", borderRadius: 8, padding: "0.4rem 0.55rem",
@@ -38,12 +38,12 @@ function DescribeBusinessDemo({ active }: { active: boolean }) {
           }}
         >
           <span style={{ opacity: active ? 1 : 0.35, transition: `opacity 0.4s ${easing}` }}>
-            {active ? "Warung Kopi Nusantara" : "Type your name…"}
+            {active ? "Warung Kopi Nusantara" : "Ketik nama Anda…"}
           </span>
         </div>
       </div>
       <div>
-        <div style={{ ...monoLabel, color: "var(--deep)", opacity: 0.5, marginBottom: 4 }}>Category</div>
+        <div style={{ ...monoLabel, color: "var(--deep)", opacity: 0.5, marginBottom: 4 }}>Kategori</div>
         <div style={{ display: "flex", gap: 4 }}>
           {categories.map((c, idx) => {
             const on = active && idx === 0;
@@ -107,7 +107,7 @@ function DropPinDemo({ active }: { active: boolean }) {
       </div>
 
       <span style={{ ...monoLabel, position: "absolute", bottom: 9, left: 11, color: "var(--deep)", opacity: 0.55 }}>
-        {active ? "Pin set · -7.782, 110.367" : "Click the map"}
+        {active ? "Pin ditandai · -7.782, 110.367" : "Klik peta"}
       </span>
     </div>
   );
@@ -160,7 +160,7 @@ function RadiusDemo({ active }: { active: boolean }) {
           />
         </div>
         <div style={{ ...monoLabel, color: "var(--deep)", opacity: 0.55, marginTop: 7 }}>
-          {active ? "Radius · 5.0 km" : "Drag to set radius"}
+          {active ? "Radius · 5,0 km" : "Geser untuk atur radius"}
         </div>
       </div>
     </div>
@@ -177,7 +177,7 @@ function DashboardDemo({ active }: { active: boolean }) {
         padding: "0.75rem 0.85rem", display: "flex", flexDirection: "column",
       }}
     >
-      <div style={{ ...monoLabel, color: "var(--bright)", opacity: 0.7 }}>Business Viability Index</div>
+      <div style={{ ...monoLabel, color: "var(--bright)", opacity: 0.7 }}>Indeks Kelayakan Bisnis</div>
       <div style={{ display: "flex", alignItems: "baseline", gap: 4, marginTop: 4 }}>
         <span
           style={{

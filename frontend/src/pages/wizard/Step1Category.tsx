@@ -23,9 +23,9 @@ export default function Step1Category() {
   const [error, setError]     = useState("");
 
   const handleNext = () => {
-    if (!name.trim())    { setError("Please enter your business name."); return; }
-    if (!category)       { setError("Please select a business category."); return; }
-    if (!concept.trim()) { setError("Please describe your business concept."); return; }
+    if (!name.trim())    { setError("Harap masukkan nama bisnis Anda."); return; }
+    if (!category)       { setError("Harap pilih kategori bisnis."); return; }
+    if (!concept.trim()) { setError("Harap deskripsikan konsep bisnis Anda."); return; }
     updateData({ name: name.trim(), category, concept: concept.trim() });
     setStep(2);
   };
@@ -35,10 +35,10 @@ export default function Step1Category() {
       {/* ── Business name ──────────────────────────────────────────────── */}
       <div>
         <label className="mb-2 block text-lg font-bold text-foreground">
-          Input your business name!
+          Masukkan nama bisnis Anda!
         </label>
         <p className="mb-3 text-sm text-muted-foreground">
-          Put in the name other people or you refer to for your business.
+          Masukkan nama yang Anda atau orang lain gunakan untuk bisnis ini.
         </p>
         <div className="flex items-center gap-2 rounded-2xl border border-card-border bg-white px-4 py-3 shadow-sm focus-within:border-foreground focus-within:ring-1 focus-within:ring-foreground transition-all">
           <input
@@ -60,7 +60,7 @@ export default function Step1Category() {
       {/* ── Category ───────────────────────────────────────────────────── */}
       <div>
         <label className="mb-3 block text-lg font-bold text-foreground">
-          Select your business category
+          Pilih kategori bisnis Anda
         </label>
         <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
           {BUSINESS_CATEGORIES.map((cat) => (
@@ -84,13 +84,13 @@ export default function Step1Category() {
       {/* ── Concept ────────────────────────────────────────────────────── */}
       <div>
         <label className="mb-2 block text-lg font-bold text-foreground">
-          Describe your business concept
+          Deskripsikan konsep bisnis Anda
         </label>
         <p className="mb-3 text-sm text-muted-foreground">
-          Describe your business in 2–3 sentences. Be as clear as you can.
+          Deskripsikan bisnis Anda dalam 2–3 kalimat — sejelasnya.
         </p>
         <textarea
-          placeholder='e.g. "A specialty coffee shop focusing on single-origin Indonesian beans with a cozy co-working atmosphere..."'
+          placeholder='mis. "Kedai kopi spesialti yang berfokus pada biji kopi single-origin Indonesia dengan suasana co-working yang nyaman..."'
           value={concept}
           onChange={(e) => setConcept(e.target.value)}
           rows={4}
@@ -110,7 +110,7 @@ export default function Step1Category() {
           onClick={handleNext}
           className="flex items-center gap-2 rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-80"
         >
-          Continue <ArrowRight className="h-4 w-4" />
+          Lanjutkan <ArrowRight className="h-4 w-4" />
         </button>
       </div>
     </div>

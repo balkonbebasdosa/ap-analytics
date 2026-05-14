@@ -9,6 +9,10 @@ interface MapPickerProps {
   longitude: number | null;
   radiusMeters: number;
   onLocationChange: (lat: number, lng: number) => void;
+  /** When set, the map pans to this position and drops a new pin. Only fires on reference change. */
+  selectedLocation?: { lat: number; lng: number } | null;
+  /** Called with a human-readable address after map click/drag reverse-geocode. */
+  onAddressChange?: (address: string) => void;
 }
 
 const DEFAULT_CENTER = { lat: -6.2088, lng: 106.8456 };
@@ -28,23 +32,27 @@ const ZONE_BADGE: Record<string, { bg: string; text: string; border: string; mes
   },
 };
 
-export default function MapPicker({ latitude, longitude, radiusMeters, onLocationChange }: MapPickerProps) {
+export default function MapPicker({
+  latitude, longitude, radiusMeters,
+  onLocationChange, selectedLocation, onAddressChange,
+}: MapPickerProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<google.maps.Map | null>(null);
   const markerRef = useRef<google.maps.Marker | null>(null);
   const circleRef = useRef<google.maps.Circle | null>(null);
   const clickListenerRef = useRef<google.maps.MapsEventListener | null>(null);
-  // Keep onLocationChange in a ref so the click listener never goes stale
   const onLocationChangeRef = useRef(onLocationChange);
+  const onAddressChangeRef = useRef(onAddressChange);
   const zoneDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const prevSelectedRef = useRef<{ lat: number; lng: number } | null>(null);
+
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [zoneResult, setZoneResult] = useState<ZoneResult | null>(null);
   const [zoneLoading, setZoneLoading] = useState(false);
 
-  useEffect(() => {
-    onLocationChangeRef.current = onLocationChange;
-  }, [onLocationChange]);
+  useEffect(() => { onLocationChangeRef.current = onLocationChange; }, [onLocationChange]);
+  useEffect(() => { onAddressChangeRef.current = onAddressChange; }, [onAddressChange]);
 
   useEffect(() => {
     const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string;
@@ -52,10 +60,7 @@ export default function MapPicker({ latitude, longitude, radiusMeters, onLocatio
       setLoadError("Google Maps API key not configured. Please add VITE_GOOGLE_MAPS_API_KEY to your .env file.");
       return;
     }
-
-    mapsLoader.load().then(() => {
-      setIsLoaded(true);
-    }).catch((err: unknown) => {
+    mapsLoader.load().then(() => setIsLoaded(true)).catch((err: unknown) => {
       setLoadError(`Failed to load Google Maps: ${String(err)}`);
     });
   }, []);
@@ -64,7 +69,6 @@ export default function MapPicker({ latitude, longitude, radiusMeters, onLocatio
     if (!isLoaded || !mapRef.current) return;
 
     const center = latitude && longitude ? { lat: latitude, lng: longitude } : DEFAULT_CENTER;
-
     const map = new google.maps.Map(mapRef.current, {
       center,
       zoom: latitude && longitude ? 15 : 12,
@@ -75,7 +79,6 @@ export default function MapPicker({ latitude, longitude, radiusMeters, onLocatio
         { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] },
       ],
     });
-
     mapInstanceRef.current = map;
 
     if (latitude && longitude) {
@@ -89,6 +92,7 @@ export default function MapPicker({ latitude, longitude, radiusMeters, onLocatio
         placeMarkerAndCircle(map, { lat, lng });
         onLocationChangeRef.current(lat, lng);
         lookupZoneDebounced(lat, lng);
+        reverseGeocode(lat, lng);
       }
     });
 
@@ -97,25 +101,29 @@ export default function MapPicker({ latitude, longitude, radiusMeters, onLocatio
         google.maps.event.removeListener(clickListenerRef.current);
         clickListenerRef.current = null;
       }
-      if (markerRef.current) {
-        markerRef.current.setMap(null);
-        markerRef.current = null;
-      }
-      if (circleRef.current) {
-        circleRef.current.setMap(null);
-        circleRef.current = null;
-      }
-      if (zoneDebounceRef.current) {
-        clearTimeout(zoneDebounceRef.current);
-      }
+      if (markerRef.current) { markerRef.current.setMap(null); markerRef.current = null; }
+      if (circleRef.current) { circleRef.current.setMap(null); circleRef.current = null; }
+      if (zoneDebounceRef.current) clearTimeout(zoneDebounceRef.current);
       mapInstanceRef.current = null;
     };
   }, [isLoaded]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  /* Pan + re-pin when a geocoded address is selected externally */
   useEffect(() => {
-    if (circleRef.current) {
-      circleRef.current.setRadius(radiusMeters);
-    }
+    if (!selectedLocation || !mapInstanceRef.current) return;
+    if (
+      prevSelectedRef.current?.lat === selectedLocation.lat &&
+      prevSelectedRef.current?.lng === selectedLocation.lng
+    ) return;
+    prevSelectedRef.current = selectedLocation;
+    mapInstanceRef.current.panTo({ lat: selectedLocation.lat, lng: selectedLocation.lng });
+    mapInstanceRef.current.setZoom(16);
+    placeMarkerAndCircle(mapInstanceRef.current, { lat: selectedLocation.lat, lng: selectedLocation.lng });
+    lookupZoneDebounced(selectedLocation.lat, selectedLocation.lng);
+  }, [selectedLocation]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (circleRef.current) circleRef.current.setRadius(radiusMeters);
   }, [radiusMeters]);
 
   function lookupZoneDebounced(lat: number, lng: number) {
@@ -129,27 +137,33 @@ export default function MapPicker({ latitude, longitude, radiusMeters, onLocatio
     }, 800);
   }
 
+  function reverseGeocode(lat: number, lng: number) {
+    fetch(
+      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
+      { headers: { "Accept-Language": "id" } }
+    )
+      .then((r) => r.json())
+      .then((data: { display_name?: string }) => {
+        if (data.display_name) onAddressChangeRef.current?.(data.display_name);
+      })
+      .catch(() => {});
+  }
+
   function placeMarkerAndCircle(map: google.maps.Map, pos: { lat: number; lng: number }) {
     if (markerRef.current) markerRef.current.setMap(null);
     if (circleRef.current) circleRef.current.setMap(null);
 
     const marker = new google.maps.Marker({
-      position: pos,
-      map,
+      position: pos, map,
       draggable: true,
-      title: "Your business location",
+      title: "Lokasi bisnis Anda",
       animation: google.maps.Animation.DROP,
     });
 
     const circle = new google.maps.Circle({
-      center: pos,
-      radius: radiusMeters,
-      map,
-      fillColor: "#1f2e15",  /* deep */
-      fillOpacity: 0.08,
-      strokeColor: "#1f2e15",  /* deep */
-      strokeOpacity: 0.8,
-      strokeWeight: 2,
+      center: pos, radius: radiusMeters, map,
+      fillColor: "#1f2e15", fillOpacity: 0.08,
+      strokeColor: "#1f2e15", strokeOpacity: 0.8, strokeWeight: 2,
     });
 
     marker.addListener("dragend", (e: google.maps.MapMouseEvent) => {
@@ -159,6 +173,7 @@ export default function MapPicker({ latitude, longitude, radiusMeters, onLocatio
         circle.setCenter({ lat, lng });
         onLocationChangeRef.current(lat, lng);
         lookupZoneDebounced(lat, lng);
+        reverseGeocode(lat, lng);
       }
     });
 
@@ -180,7 +195,7 @@ export default function MapPicker({ latitude, longitude, radiusMeters, onLocatio
       <div className="flex h-[400px] items-center justify-center rounded-xl border bg-muted/50">
         <div className="flex flex-col items-center gap-3">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-          <p className="text-sm text-muted-foreground">Loading map...</p>
+          <p className="text-sm text-muted-foreground">Memuat peta...</p>
         </div>
       </div>
     );
@@ -192,7 +207,6 @@ export default function MapPicker({ latitude, longitude, radiusMeters, onLocatio
     <div className="space-y-0">
       <div ref={mapRef} className="map-container h-[400px] w-full rounded-xl border" />
 
-      {/* Zone badge — shown below the map after a pin is placed */}
       {zoneLoading && (
         <div className="mt-3 h-10 animate-pulse rounded-xl border bg-muted/40" />
       )}

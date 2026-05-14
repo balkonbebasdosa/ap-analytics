@@ -15,14 +15,14 @@ const QUADRANTS: {
   divider: string;
   countNoun: string;
 }[] = [
-  { key: "strengths",     letter: "S", label: "Strengths",     bg: "var(--deep)", fg: "var(--cream)",
-    divider: "color-mix(in srgb, var(--cream) 18%, transparent)",  countNoun: "advantages" },
-  { key: "weaknesses",    letter: "W", label: "Weaknesses",    bg: "var(--deep)",  fg: "var(--cream)",
-    divider: "color-mix(in srgb, var(--cream) 18%, transparent)",   countNoun: "gaps" },
-  { key: "opportunities", letter: "O", label: "Opportunities", bg: "var(--bright)",  fg: "var(--deep)",
-    divider: "color-mix(in srgb, var(--deep) 18%, transparent)", countNoun: "openings" },
-  { key: "threats",       letter: "T", label: "Threats",       bg: "var(--bright)",   fg: "var(--deep)",
-    divider: "color-mix(in srgb, var(--deep) 18%, transparent)",  countNoun: "risks" },
+  { key: "strengths",     letter: "S", label: "Kekuatan",     bg: "var(--deep)", fg: "var(--cream)",
+    divider: "color-mix(in srgb, var(--cream) 18%, transparent)",  countNoun: "keunggulan" },
+  { key: "weaknesses",    letter: "W", label: "Kelemahan",    bg: "var(--deep)",  fg: "var(--cream)",
+    divider: "color-mix(in srgb, var(--cream) 18%, transparent)",   countNoun: "kekurangan" },
+  { key: "opportunities", letter: "O", label: "Peluang", bg: "var(--bright)",  fg: "var(--deep)",
+    divider: "color-mix(in srgb, var(--deep) 18%, transparent)", countNoun: "kesempatan" },
+  { key: "threats",       letter: "T", label: "Ancaman",       bg: "var(--bright)",   fg: "var(--deep)",
+    divider: "color-mix(in srgb, var(--deep) 18%, transparent)",  countNoun: "risiko" },
 ];
 
 export default function SwotCard({ swot }: SwotCardProps) {
@@ -78,7 +78,7 @@ export default function SwotCard({ swot }: SwotCardProps) {
               color: q.fg, opacity: 0.55,
               marginBottom: "1.8rem",
             }}>
-              {items.length} key {q.countNoun}
+              {items.length} {q.countNoun} utama
             </p>
 
             <ul style={{ display: "flex", flexDirection: "column", gap: 0, flex: 1, margin: 0, padding: 0, listStyle: "none" }}>

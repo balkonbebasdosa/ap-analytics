@@ -29,7 +29,7 @@ export default function Step3Location() {
 
   const handleNext = () => {
     if (!latitude || !longitude) {
-      setError("Please click on the map to set your business location.");
+      setError("Harap klik pada peta untuk menentukan lokasi bisnis Anda.");
       return;
     }
     updateData({ latitude, longitude, radiusMeters });
@@ -40,9 +40,9 @@ export default function Step3Location() {
     <div className="space-y-8">
       {/* ── Heading ─────────────────────────────────────────────────────── */}
       <div>
-        <h2 className="text-lg font-bold text-foreground">Pinpoint your business location!</h2>
+        <h2 className="text-lg font-bold text-foreground">Tentukan lokasi bisnis Anda!</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Click on the map to drop a pin at your intended storefront location.
+          Klik pada peta untuk menandai pin di lokasi toko yang Anda rencanakan.
         </p>
       </div>
 
@@ -61,7 +61,7 @@ export default function Step3Location() {
         <div className="flex items-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
           <MapPin className="h-4 w-4 flex-shrink-0" />
           <span>
-            Location set: {latitude.toFixed(5)}, {longitude.toFixed(5)} · Radius:{" "}
+            Lokasi ditandai: {latitude.toFixed(5)}, {longitude.toFixed(5)} · Radius:{" "}
             {formatDistance(radiusMeters)}
           </span>
         </div>
@@ -70,13 +70,13 @@ export default function Step3Location() {
       {/* ── Radius selector ─────────────────────────────────────────────── */}
       <div>
         <div className="mb-2 flex items-center justify-between">
-          <span className="text-sm font-bold text-foreground">Analysis radius</span>
+          <span className="text-sm font-bold text-foreground">Radius analisis</span>
           <span className="text-sm font-semibold text-muted-foreground">
             {formatDistance(radiusMeters)}
           </span>
         </div>
         <p className="mb-3 text-xs text-muted-foreground">
-          Define the geographic zone to scan for competitors.
+          Tentukan zona geografis untuk memindai pesaing.
         </p>
         <div className="flex flex-wrap gap-2">
           {RADIUS_OPTIONS.map((opt) => (
@@ -108,13 +108,13 @@ export default function Step3Location() {
           onClick={() => setStep(2)}
           className="flex items-center gap-2 rounded-full border border-card-border px-6 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
         >
-          <ArrowLeft className="h-4 w-4" /> Back
+          <ArrowLeft className="h-4 w-4" /> Kembali
         </button>
         <button
           onClick={handleNext}
           className="flex items-center gap-2 rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-80"
         >
-          Continue <ArrowRight className="h-4 w-4" />
+          Lanjutkan <ArrowRight className="h-4 w-4" />
         </button>
       </div>
     </div>
