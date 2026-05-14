@@ -15,9 +15,6 @@ import { PaletteScope } from "@/components/ui/PaletteScope";
 import { HexButton } from "@/components/ui/HexButton";
 import { MonoLabel } from "@/components/ui/MonoLabel";
 
-/* ──────────────────────────────────────────────────────────────────────────
-   Hero compartment — title bar (action row) + identity + metrics grid
-   ────────────────────────────────────────────────────────────────────── */
 function DashboardHero({
   profile, result, competitors, consultNum,
 }: {
@@ -42,7 +39,6 @@ function DashboardHero({
         overflow: "hidden",
       }}
     >
-      {/* Title-bar action row — deep-emphasis strip */}
       <div
         className="compartment-header"
         style={{
@@ -245,21 +241,71 @@ function Section({
   );
 }
 
-/* ──────────────────────────────────────────────────────────────────────────
-   Competitor ledger row — alternating soft/cream stripe
-   ────────────────────────────────────────────────────────────────────── */
-function CompetitorRow({ c, alt }: { c: Competitor; alt: boolean }) {
+const PRICE_TIER_LABEL: Record<number, string> = {
+  1: "Budget", 2: "Mid-range", 3: "Premium", 4: "Luxury",
+};
+
+function PriceDeltaBadge({ delta }: { delta: number }) {
+  const color = delta === 0 ? "#b91c1c" : delta === 1 ? "#d97706" : "#16a34a";
+  const bg = delta === 0 ? "#fee2e2" : delta === 1 ? "#fef3c7" : "#dcfce7";
+  const label = delta === 0 ? "Same tier" : delta === 1 ? `Δ${delta} tier` : `Δ${delta} tiers`;
+  return (
+    <span style={{
+      display: "inline-block",
+      background: bg, color,
+      padding: "2px 8px", borderRadius: 999,
+      fontFamily: "'Inter', system-ui, sans-serif",
+      fontSize: 10, fontWeight: 700, letterSpacing: "0.06em",
+      whiteSpace: "nowrap",
+    }}>
+      {label}
+    </span>
+  );
+}
+
+function CategoryBadge({ match }: { match: boolean }) {
+  return (
+    <span style={{
+      display: "inline-block",
+      background: match ? "var(--bright)" : "var(--soft)",
+      color: match ? "var(--deep)" : "color-mix(in srgb, var(--deep) 45%, transparent)",
+      padding: "2px 8px", borderRadius: 999,
+      fontFamily: "'Inter', system-ui, sans-serif",
+      fontSize: 10, fontWeight: 700, letterSpacing: "0.06em",
+      whiteSpace: "nowrap",
+    }}>
+      {match ? "✓ Match" : "No match"}
+    </span>
+  );
+}
+
+function CompetitorRow({ c, rank, alt }: { c: Competitor; rank: number; alt: boolean }) {
+  const isTopThreat = rank === 1;
   return (
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: "1fr 1fr auto auto",
-        gap: "1rem", alignItems: "center",
-        padding: "0.85rem 1.1rem",
+        gridTemplateColumns: "32px 1.4fr 1fr auto auto auto auto",
+        gap: "0.75rem", alignItems: "center",
+        padding: "0.75rem 1.1rem",
         borderRadius: 12,
-        background: alt ? "var(--soft)" : "transparent",
+        background: isTopThreat
+          ? "color-mix(in srgb, var(--deep) 8%, transparent)"
+          : alt ? "var(--soft)" : "transparent",
+        outline: isTopThreat ? "1.5px solid color-mix(in srgb, var(--deep) 20%, transparent)" : "none",
       }}
     >
+      {/* Rank */}
+      <div style={{
+        fontFamily: "'Inter', system-ui, sans-serif",
+        fontSize: 11, fontWeight: 700,
+        color: isTopThreat ? "var(--deep)" : "color-mix(in srgb, var(--deep) 35%, transparent)",
+        textAlign: "center",
+      }}>
+        {isTopThreat ? "🔥" : `#${rank}`}
+      </div>
+
+      {/* Name + type */}
       <div>
         <div style={{
           fontFamily: "'Inter', system-ui, sans-serif",
@@ -272,24 +318,39 @@ function CompetitorRow({ c, alt }: { c: Competitor; alt: boolean }) {
           {c.type.replace(/_/g, " ")}
         </MonoLabel>
       </div>
+
+      {/* Address */}
       <div style={{
         fontFamily: "'Inter', system-ui, sans-serif",
-        fontWeight: 500,
-        fontSize: 12, color: "color-mix(in srgb, var(--deep) 65%, transparent)",
+        fontWeight: 500, fontSize: 12,
+        color: "color-mix(in srgb, var(--deep) 65%, transparent)",
         overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
       }}>
         {c.vicinity}
       </div>
+
+      {/* Price delta */}
+      <div style={{ textAlign: "center" }}>
+        <PriceDeltaBadge delta={c.priceDelta ?? 0} />
+      </div>
+
+      {/* Category match */}
+      <div style={{ textAlign: "center" }}>
+        <CategoryBadge match={c.categoryMatch ?? false} />
+      </div>
+
+      {/* Distance */}
       <div style={{
         fontFamily: "'Inter', system-ui, sans-serif",
         fontSize: 12, fontWeight: 700, letterSpacing: "0.04em",
-        color: "var(--deep)",
-        fontVariantNumeric: "tabular-nums",
+        color: "var(--deep)", fontVariantNumeric: "tabular-nums",
         textAlign: "right",
       }}>
         {formatDistance(c.distanceMeters)}
       </div>
-      <div style={{ display: "flex", alignItems: "center", gap: 4, justifyContent: "flex-end", minWidth: 52 }}>
+
+      {/* Rating */}
+      <div style={{ display: "flex", alignItems: "center", gap: 4, justifyContent: "flex-end", minWidth: 44 }}>
         {c.rating ? (
           <>
             <Star style={{ width: 12, height: 12, fill: "var(--bright)", color: "var(--bright)", flexShrink: 0 }} />
@@ -309,9 +370,6 @@ function CompetitorRow({ c, alt }: { c: Competitor; alt: boolean }) {
   );
 }
 
-/* ──────────────────────────────────────────────────────────────────────────
-   DashboardPage
-   ────────────────────────────────────────────────────────────────────── */
 export default function DashboardPage() {
   const { profileId } = useParams<{ profileId: string }>();
   const [profile, setProfile] = useState<BusinessProfile | null>(null);
@@ -425,12 +483,11 @@ export default function DashboardPage() {
           <SwotCard swot={result.swot} />
         </Section>
 
-        {/* ── 03 Competitors ───────────────────────────────────────────── */}
         <Section
           anchor="C · COMPETITORS"
           count="03 / 04"
           title="What's already in the radius."
-          description="Pink dots are competing businesses; the dark dot is your candidate location."
+          description="Pink dots are competing businesses; the dark dot is your candidate location. Ranked by threat level — same price tier first, then category match, then proximity."
         >
           <div className="compartment-stack--tight" style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
             <CompetitorMap
@@ -441,6 +498,53 @@ export default function DashboardPage() {
               zone={result.zone}
             />
 
+            {/* Top Threat callout */}
+            {result.topCompetitor && (
+              <div className="compartment-inner" style={{
+                padding: "1rem 1.2rem",
+                display: "flex", flexWrap: "wrap", gap: "1rem", alignItems: "center",
+                justifyContent: "space-between",
+                outline: "1.5px solid color-mix(in srgb, var(--deep) 20%, transparent)",
+                borderRadius: 14,
+              }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                  <MonoLabel size="xs" tone="ink" style={{ opacity: 0.6 }}>🔥 Top threat competitor</MonoLabel>
+                  <div style={{
+                    fontFamily: "'Inter', system-ui, sans-serif",
+                    fontSize: 18, fontWeight: 800, color: "var(--deep)",
+                    letterSpacing: "-0.02em",
+                  }}>
+                    {result.topCompetitor.name}
+                  </div>
+                  <div style={{
+                    fontFamily: "'Inter', system-ui, sans-serif",
+                    fontSize: 11, color: "color-mix(in srgb, var(--deep) 60%, transparent)",
+                  }}>
+                    {result.topCompetitor.vicinity}
+                  </div>
+                </div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", alignItems: "center" }}>
+                  <span style={{
+                    background: "var(--deep)", color: "var(--bright)",
+                    padding: "5px 14px", borderRadius: 999,
+                    fontFamily: "'Inter', system-ui, sans-serif",
+                    fontSize: 11, fontWeight: 700, letterSpacing: "0.08em",
+                  }}>
+                    Your tier: {PRICE_TIER_LABEL[result.userPriceTier] ?? `T${result.userPriceTier}`}
+                  </span>
+                  <PriceDeltaBadge delta={result.topCompetitor.priceDelta} />
+                  <CategoryBadge match={result.topCompetitor.categoryMatch} />
+                  <span style={{
+                    fontFamily: "'Inter', system-ui, sans-serif",
+                    fontSize: 12, fontWeight: 600, color: "var(--deep)", opacity: 0.7,
+                  }}>
+                    {formatDistance(result.topCompetitor.distanceMeters)} away
+                    {result.topCompetitor.rating ? ` · ★ ${result.topCompetitor.rating}` : ""}
+                  </span>
+                </div>
+              </div>
+            )}
+
             {competitors.length > 0 && (
               <div className="compartment-inner" style={{ padding: "0.6rem" }}>
                 {/* Header strip */}
@@ -448,14 +552,14 @@ export default function DashboardPage() {
                   className="compartment-header"
                   style={{
                     display: "grid",
-                    gridTemplateColumns: "1fr 1fr auto auto",
-                    gap: "1rem",
+                    gridTemplateColumns: "32px 1.4fr 1fr auto auto auto auto",
+                    gap: "0.75rem",
                     padding: "0.55rem 1.1rem",
                     marginBottom: "0.4rem",
                     borderRadius: 12,
                   }}
                 >
-                  {["Business", "Address", "Distance", "Rating"].map((h) => (
+                  {["#", "Business", "Address", "Price Delta", "Category", "Distance", "Rating"].map((h) => (
                     <div
                       key={h}
                       style={{
@@ -463,7 +567,7 @@ export default function DashboardPage() {
                         fontSize: 10, fontWeight: 700,
                         color: "var(--bright)", opacity: 0.85,
                         textTransform: "uppercase", letterSpacing: "0.14em",
-                        textAlign: h === "Distance" || h === "Rating" ? "right" : "left",
+                        textAlign: (h === "Distance" || h === "Rating" || h === "#") ? "center" : "left",
                       }}
                     >
                       {h}
@@ -481,7 +585,7 @@ export default function DashboardPage() {
                       viewport={{ once: true }}
                       transition={{ delay: i * 0.02 }}
                     >
-                      <CompetitorRow c={c} alt={i % 2 === 1} />
+                      <CompetitorRow c={c} rank={i + 1} alt={i % 2 === 1} />
                     </motion.div>
                   ))}
                 </div>

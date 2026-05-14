@@ -2,6 +2,7 @@ import { Response } from "express";
 import { prisma } from "../lib/prisma";
 import { fetchNearbyCompetitors } from "../lib/places";
 import { runMLAnalysis } from "../lib/mlPredictor";
+import { rankCompetitors, calculatePriceTier } from "../lib/competitorRanker";
 import { AuthRequest } from "../middleware/auth";
 
 export async function analyzeProfile(req: AuthRequest, res: Response): Promise<void> {
@@ -35,12 +36,33 @@ export async function analyzeProfile(req: AuthRequest, res: Response): Promise<v
   }
 
   try {
-    const competitors = await fetchNearbyCompetitors(
+    const rawCompetitors = await fetchNearbyCompetitors(
       profile.latitude,
       profile.longitude,
       profile.radiusMeters,
       profile.category
     );
+
+    const products = (profile.products as Array<{ name: string; price: number }>) || [];
+    const avgPrice =
+      products.length > 0
+        ? products.reduce((sum, p) => sum + p.price, 0) / products.length
+        : 0;
+    const userPriceTier = calculatePriceTier(avgPrice);
+    const userProductsLabel = products.map((p) => p.name).join(" ").toLowerCase();
+
+    const rankedCompetitors = rankCompetitors(rawCompetitors, userPriceTier, userProductsLabel);
+    const topCompetitor = rankedCompetitors[0] ?? null;
+
+    console.log("USER_PRICE_TIER:", userPriceTier, "AVG_PRICE_IDR:", avgPrice);
+    if (topCompetitor) {
+      console.log("TOP_THREAT_COMPETITOR:", {
+        name: topCompetitor.name,
+        priceDelta: topCompetitor.priceDelta,
+        categoryMatch: topCompetitor.categoryMatch,
+        distanceMeters: topCompetitor.distanceMeters,
+      });
+    }
 
     const addressResponse = await fetch(
       `https://maps.googleapis.com/maps/api/geocode/json?latlng=${profile.latitude},${profile.longitude}&key=${process.env.GOOGLE_MAPS_API_KEY ?? ""}`
@@ -50,8 +72,6 @@ export async function analyzeProfile(req: AuthRequest, res: Response): Promise<v
     };
     const address = addressData.results[0]?.formatted_address || "Unknown location";
 
-    const products = (profile.products as Array<{ name: string; price: number }>) || [];
-
     const analysisResult = await runMLAnalysis({
       businessName: profile.name,
       category: profile.category,
@@ -60,14 +80,22 @@ export async function analyzeProfile(req: AuthRequest, res: Response): Promise<v
       goals: profile.goals,
       location: { lat: profile.latitude, lng: profile.longitude, address },
       radiusMeters: profile.radiusMeters,
-      competitors,
+      competitors: rankedCompetitors,
     });
 
     const updatedProfile = await prisma.businessProfile.update({
       where: { id: profileId },
       data: {
         status: "COMPLETED",
-        analysisResult: JSON.parse(JSON.stringify({ ...analysisResult, competitors, address })),
+        analysisResult: JSON.parse(
+          JSON.stringify({
+            ...analysisResult,
+            competitors: rankedCompetitors,
+            topCompetitor,
+            address,
+            userPriceTier,
+          })
+        ),
       },
     });
 
