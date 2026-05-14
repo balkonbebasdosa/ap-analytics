@@ -1,0 +1,601 @@
+/* ── Inter — the bold sans for the entire UI ────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+/* ── Young Serif — KEPT for the logo only (".font-display") ─────────────── */
+@font-face {
+  font-family: 'Young Serif';
+  src: url('/fonts/YoungSerif-Light.otf') format('opentype');
+  font-weight: 300; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Young Serif';
+  src: url('/fonts/YoungSerif-Regular.otf') format('opentype');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Young Serif';
+  src: url('/fonts/YoungSerif-Medium.otf') format('opentype');
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Young Serif';
+  src: url('/fonts/YoungSerif-Bold.otf') format('opentype');
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ──────────────────────────────────────────────────────────────────────────
+   DESIGN SYSTEM — single green family, three depths.
+
+     cream   #e8efd6  — page background (cream green, warm pale)
+     mist    #d3deb6  — surface tint on cream (cards, input fills)
+     moss    #a3b48a  — muted secondary on cream / muted bars on deep
+     bright  #9fe878  — bright contrast pop (CTA, highlighted metric)
+     deep    #1f2e15  — dark green secondary surface, primary CTA bg
+     ink     #0e1505  — true near-black, used sparingly for text on bright
+
+   No pink, no other hues. Single chromatic identity.
+   ────────────────────────────────────────────────────────────────────── */
+:root {
+  /* Three-step light ladder for compartment nesting:
+       cream (page canvas)  →  soft (input wells / table rows / sub-tints)
+                            →  mist (big section panels)
+     Plus bright (highlight pop) and deep (rare dark emphasis).            */
+  --cream:  #e8efd6;
+  --soft:   #deebcb;
+  --mist:   #d3deb6;
+  --moss:   #a3b48a;
+  --bright: #9fe878;
+  --deep:   #1f2e15;
+  --ink:    #0e1505;
+
+  /* Legacy aliases — anything still referencing the old green ramp picks up the new system. */
+  --paper:     var(--cream);
+  --green-10:  var(--cream);
+  --green-20:  var(--mist);
+  --green-40:  var(--bright);
+  --green-100: var(--deep);
+  --pink-10:   var(--mist);
+  --pink-20:   var(--moss);
+  --pink-40:   var(--bright);
+  --pink-100:  var(--deep);
+
+  --current-color-10:  var(--cream);
+  --current-color-20:  var(--mist);
+  --current-color-40:  var(--bright);
+  --current-color-100: var(--deep);
+  --accent-color-10:   var(--cream);
+  --accent-color-20:   var(--mist);
+  --accent-color-40:   var(--bright);
+  --accent-color-100:  var(--deep);
+
+  --letter-spacing-tight: -0.025em;
+  --transition-color-duration: 0.3s;
+  --transition-color-easing: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-palette],
+[data-palette="green"],
+[data-palette="pink"] {
+  --current-color-10: var(--cream); --current-color-20: var(--mist);
+  --current-color-40: var(--bright); --current-color-100: var(--deep);
+}
+
+@layer base {
+  :root {
+    /* shadcn-compatible HSL tokens — all green, single family */
+    --background:           70 36% 89%;  /* cream */
+    --foreground:           99 36% 13%;  /* deep */
+
+    --card:                 70 36% 89%;
+    --card-foreground:      99 36% 13%;
+
+    --popover:              70 36% 89%;
+    --popover-foreground:   99 36% 13%;
+
+    --primary:              99 36% 13%;  /* deep */
+    --primary-foreground:   91 65% 69%;  /* bright */
+
+    --secondary:            74 30% 80%;  /* mist */
+    --secondary-foreground: 99 36% 13%;
+
+    --muted:                74 30% 80%;
+    --muted-foreground:     86 17% 50%;  /* moss */
+
+    --accent:               91 65% 69%;  /* bright */
+    --accent-foreground:    99 36% 13%;
+
+    --destructive:          99 36% 13%;  /* deep — alerts use depth, not chroma */
+    --destructive-foreground: 70 36% 89%; /* cream */
+
+    --border:               99 36% 13%;
+    --input:                99 36% 13%;
+    --ring:                 91 65% 69%;
+
+    --radius: 0.75rem;  /* smooth, generous corners */
+
+    /* Legacy aliases for any older code path */
+    --cream-h:    70 36% 89%;
+    --charcoal:   99 36% 13%;
+    --card-border:99 36% 13%;
+    --bvi-orange: 91 65% 69%;
+    --sticky-yellow: 74 30% 80%;
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  html, body {
+    background: var(--cream);
+    color: var(--deep);
+  }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-weight: 400;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  /* h1..h6 are Inter by default. Only the .font-display class (logo) uses Young Serif. */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--deep);
+  }
+  ::selection { background: var(--bright); color: var(--deep); }
+}
+
+/* ── Logo class — Young Serif kept ONLY here ──────────────────────────── */
+.brand-logo {
+  font-family: 'Young Serif', Georgia, serif;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--deep);
+}
+
+/* ── Map container ─────────────────────────────────────────────────────── */
+.map-container {
+  width: 100%; height: 100%; min-height: 400px;
+  border-radius: 12px; overflow: hidden;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   TYPOGRAPHY UTILITIES — all Inter
+   ────────────────────────────────────────────────────────────────────── */
+.paper-surface {
+  background: var(--cream);
+  color: var(--deep);
+  transition: background var(--transition-color-duration) var(--transition-color-easing),
+              color var(--transition-color-duration) var(--transition-color-easing);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   COMPARTMENT SYSTEM — boundaries via shade, never via lines.
+
+     .compartment           mist panel, the "big section container"
+     .compartment-inner     cream card nested inside a compartment
+     .compartment-well      soft tint, for inputs / table rows / sub-tints
+     .compartment-bright    bright pop, for highlighted CTA panels
+     .compartment-deep      deep dark, for rare emphasis moments
+     .compartment-stack     vertical layout with gap between compartments
+     .row-stripe            list row that auto-tints (alt rows = soft)
+   ────────────────────────────────────────────────────────────────────── */
+.compartment {
+  background: var(--mist);
+  color: var(--deep);
+  border: none;
+  border-radius: 28px;
+  padding: clamp(1.6rem, 3.5vw, 2.6rem);
+  transition: background 200ms var(--transition-color-easing);
+}
+.compartment-inner {
+  background: var(--cream);
+  color: var(--deep);
+  border: none;
+  border-radius: 20px;
+  padding: clamp(1.4rem, 3vw, 2.2rem);
+  transition: background 200ms var(--transition-color-easing);
+}
+.compartment-well {
+  background: var(--soft);
+  color: var(--deep);
+  border: none;
+  border-radius: 14px;
+  padding: clamp(1rem, 2vw, 1.4rem);
+  transition: background 200ms var(--transition-color-easing);
+}
+.compartment-bright {
+  background: var(--bright);
+  color: var(--deep);
+  border: none;
+  border-radius: 28px;
+  padding: clamp(2rem, 4.5vw, 3.6rem);
+}
+.compartment-deep {
+  background: var(--deep);
+  color: var(--bright);
+  border: none;
+  border-radius: 28px;
+  padding: clamp(2rem, 4.5vw, 3.6rem);
+}
+.compartment-deep .compartment-inner {
+  /* When nested inside a deep panel, inner cards stay deep but lighten slightly */
+  background: color-mix(in srgb, var(--deep) 86%, var(--bright));
+  color: var(--bright);
+}
+
+/* Vertical rhythm between stacked compartments — the gap IS the divider */
+.compartment-stack {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.9rem, 1.6vw, 1.4rem);
+}
+.compartment-stack--loose { gap: clamp(1.4rem, 2.4vw, 2rem); }
+.compartment-stack--tight { gap: 0.5rem; }
+
+/* List-row striping — used inside a compartment-inner to differentiate rows
+   without drawing lines. Alternates cream ↔ soft.                          */
+.row-stripe {
+  background: transparent;
+  border-radius: 12px;
+  padding: 0.85rem 1.1rem;
+  transition: background 160ms ease;
+}
+.row-stripe:nth-child(even) { background: var(--soft); }
+.row-stripe:hover           { background: color-mix(in srgb, var(--bright) 22%, var(--cream)); }
+
+/* Optional: compartment header strip (the "title bar" pattern from the reference) */
+.compartment-header {
+  background: var(--deep);
+  color: var(--bright);
+  border-radius: 14px;
+  padding: 0.75rem 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1.2rem;
+}
+
+.display-hero {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(3rem, 8vw, 7.5rem);
+  line-height: 0.96;
+  letter-spacing: -0.035em;
+  color: var(--deep);
+}
+
+.display-xl {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(2rem, 4.5vw, 3.6rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--deep);
+}
+
+.display-lg {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--deep);
+}
+
+.serif-body,
+.body-lead {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 400;
+  font-size: clamp(0.95rem, 1.2vw, 1.05rem);
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--deep) 78%, transparent);
+  letter-spacing: -0.005em;
+}
+
+.mono-label,
+.mono-eyebrow {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: var(--deep);
+}
+
+.mono-anchor {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--deep);
+  opacity: 0.6;
+}
+
+.mono-nav {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--deep);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   BUTTONS — smooth rounded rectangles, NO borders, color contrast only.
+   Used by HexButton component (.hex-btn keeps the same class hooks).
+   ────────────────────────────────────────────────────────────────────── */
+.hex-btn,
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  border: none;
+  border-radius: 999px;
+  padding: 0.85rem 1.5rem;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  transition: background 200ms var(--transition-color-easing),
+              color 200ms var(--transition-color-easing),
+              transform 120ms ease;
+  /* Default = primary (bright on deep contrast) */
+  background: var(--bright);
+  color: var(--deep);
+}
+.hex-btn:hover,
+.btn:hover { background: color-mix(in srgb, var(--bright) 88%, var(--deep)); }
+.hex-btn:active,
+.btn:active { transform: translateY(1px); }
+
+/* Solid variant = deep bg, bright text — primary CTA when on cream/light surfaces */
+.hex-btn--solid,
+.btn-primary {
+  background: var(--deep);
+  color: var(--bright);
+}
+.hex-btn--solid:hover,
+.btn-primary:hover { background: color-mix(in srgb, var(--deep) 86%, var(--bright)); }
+
+/* Outline variant — used when on top of the deep surface, becomes bright fill */
+.hex-btn--outline,
+.btn-secondary {
+  background: var(--mist);
+  color: var(--deep);
+}
+.hex-btn--outline:hover,
+.btn-secondary:hover { background: color-mix(in srgb, var(--mist) 80%, var(--deep)); color: var(--deep); }
+
+/* Ghost variant */
+.btn-ghost {
+  background: transparent;
+  color: var(--deep);
+}
+.btn-ghost:hover { background: color-mix(in srgb, var(--mist) 70%, transparent); }
+
+.hex-btn:disabled,
+.btn:disabled { opacity: 0.45; pointer-events: none; cursor: not-allowed; }
+
+/* Internal anchor/label spans inside HexButton retain layout */
+.hex-btn__bg { display: none; }      /* SVG hex artwork no longer rendered */
+.hex-btn__label { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0; }
+
+/* Small pill (chip) — used for status/category tags */
+.pill-mono {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--deep);
+  background: var(--mist);
+  border: none;
+  border-radius: 999px;
+  padding: 0.38rem 0.9rem;
+  transition: background 200ms ease;
+}
+
+.divider-ink {
+  border: none;
+  border-top: 1px solid color-mix(in srgb, var(--deep) 18%, transparent);
+  margin: 0;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   SURFACES — soft cards, no borders, color contrast only
+   ────────────────────────────────────────────────────────────────────── */
+.card-paper {
+  background: var(--mist);
+  border: none;
+  border-radius: 18px;
+}
+.card-tinted {
+  background: var(--bright);
+  color: var(--deep);
+  border: none;
+  border-radius: 18px;
+}
+.card-deep {
+  background: var(--deep);
+  color: var(--bright);
+  border: none;
+  border-radius: 18px;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   LEGACY ds-* utility classes — repainted to the new system
+   ────────────────────────────────────────────────────────────────────── */
+.ds-card {
+  background: var(--mist);
+  border: none;
+  border-radius: 18px;
+}
+.ds-btn-primary,
+.ds-btn-secondary,
+.ds-btn-stamp {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 0.5rem;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.92rem; font-weight: 600; letter-spacing: -0.01em;
+  border: none; border-radius: 999px;
+  padding: 0.85rem 1.5rem; cursor: pointer; text-decoration: none;
+  transition: background 200ms var(--transition-color-easing), color 200ms var(--transition-color-easing);
+}
+.ds-btn-primary  { background: var(--deep);   color: var(--bright); }
+.ds-btn-primary:hover  { background: color-mix(in srgb, var(--deep) 86%, var(--bright)); }
+.ds-btn-secondary { background: var(--mist); color: var(--deep); }
+.ds-btn-secondary:hover { background: color-mix(in srgb, var(--mist) 80%, var(--deep)); color: var(--deep); }
+.ds-btn-stamp    { background: var(--bright); color: var(--deep); }
+.ds-btn-stamp:hover { background: color-mix(in srgb, var(--bright) 88%, var(--deep)); }
+.ds-input {
+  display: block; width: 100%;
+  background: var(--mist);
+  border: none;
+  border-radius: 14px;
+  padding: 0.95rem 1.1rem;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 500; font-size: 0.95rem;
+  color: var(--deep); outline: none;
+  transition: background 200ms ease, box-shadow 200ms ease;
+}
+.ds-input::placeholder { color: color-mix(in srgb, var(--deep) 45%, transparent); font-weight: 400; }
+.ds-input:hover { background: color-mix(in srgb, var(--mist) 78%, var(--cream)); }
+.ds-input:focus {
+  background: color-mix(in srgb, var(--mist) 90%, var(--cream));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--bright) 50%, transparent);
+}
+
+.ds-eyebrow {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 11px; text-transform: uppercase;
+  letter-spacing: 0.10em; font-weight: 700;
+  color: var(--deep);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   ANIMATIONS
+   ────────────────────────────────────────────────────────────────────── */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(-3deg); }
+  50%       { transform: translateY(-8px) rotate(-3deg); }
+}
+@keyframes float-sticky {
+  0%, 100% { transform: translateY(0px) rotate(2deg); }
+  50%       { transform: translateY(-6px) rotate(2deg); }
+}
+
+.animate-float        { animation: float 4s ease-in-out infinite; }
+.animate-float-sticky { animation: float-sticky 5s ease-in-out infinite; }
+.wizard-step-enter    { animation: fade-in 0.3s ease-out; }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   FORM PRIMITIVES — rounded fills, no borders
+   ────────────────────────────────────────────────────────────────────── */
+.range-slider {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 8px;
+  background: var(--mist);
+  border-radius: 999px;
+  outline: none; cursor: pointer;
+}
+.range-slider::-webkit-slider-runnable-track { height: 8px; background: transparent; }
+.range-slider::-moz-range-track { height: 8px; background: transparent; border: none; }
+.range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 28px; height: 28px;
+  background: var(--bright);
+  border: 4px solid var(--cream);
+  border-radius: 999px;
+  cursor: grab; margin-top: -10px;
+  box-shadow: 0 2px 8px rgba(31, 46, 21, 0.18);
+  transition: transform 180ms ease, background 180ms ease;
+}
+.range-slider::-webkit-slider-thumb:hover { background: var(--deep); }
+.range-slider::-webkit-slider-thumb:active { cursor: grabbing; transform: scale(1.08); }
+.range-slider::-moz-range-thumb {
+  width: 24px; height: 24px;
+  background: var(--bright);
+  border: 4px solid var(--cream);
+  border-radius: 999px;
+  cursor: grab;
+  box-shadow: 0 2px 8px rgba(31, 46, 21, 0.18);
+}
+.range-slider::-moz-range-thumb:hover { background: var(--deep); }
+
+.mono-input {
+  display: block; width: 100%;
+  background: var(--mist);
+  border: none;
+  border-radius: 14px;
+  padding: 14px 18px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 500; font-size: 0.95rem;
+  color: var(--deep); outline: none;
+  transition: background 200ms ease, box-shadow 200ms ease;
+}
+.mono-input::placeholder {
+  color: color-mix(in srgb, var(--deep) 45%, transparent);
+  font-weight: 400;
+}
+.mono-input:hover { background: color-mix(in srgb, var(--mist) 80%, var(--cream)); }
+.mono-input:focus {
+  background: color-mix(in srgb, var(--mist) 90%, var(--cream));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--bright) 50%, transparent);
+}
+
+.pill-toggle {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.82rem; font-weight: 600;
+  letter-spacing: -0.005em; text-transform: none;
+  color: var(--deep);
+  background: var(--mist);
+  border: none;
+  border-radius: 999px;
+  padding: 10px 18px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 200ms ease, color 200ms ease;
+}
+.pill-toggle:hover { background: color-mix(in srgb, var(--mist) 80%, var(--cream)); }
+.pill-toggle.is-active {
+  background: var(--deep); color: var(--bright);
+}
+.pill-toggle.is-active:hover { background: color-mix(in srgb, var(--deep) 88%, var(--bright)); }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   SCORE / METRIC BAR
+   ────────────────────────────────────────────────────────────────────── */
+.score-bar-track {
+  position: relative;
+  width: 100%; height: 36px;
+  background: var(--mist);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.score-bar-fill {
+  position: absolute; inset: 0;
+  background: var(--deep);
+  transform-origin: left;
+  transition: transform 700ms var(--transition-color-easing);
+}
+.score-bar-fill--accent { background: var(--bright); }
