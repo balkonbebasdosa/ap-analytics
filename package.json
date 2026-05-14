@@ -14,5 +14,10 @@
     "docker:down": "docker-compose down",
     "db:migrate": "npm run prisma:migrate --prefix backend",
     "db:studio": "npm run prisma:studio --prefix backend"
+  },
+  "dependencies": {
+    "concurrently": "^9.2.1",
+    "tsx": "^4.21.0",
+    "vite": "^8.0.12"
   }
 }
