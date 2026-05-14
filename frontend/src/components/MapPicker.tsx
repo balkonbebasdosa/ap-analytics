@@ -16,15 +16,15 @@ const DEFAULT_CENTER = { lat: -6.2088, lng: 106.8456 };
 const ZONE_BADGE: Record<string, { bg: string; text: string; border: string; message: string }> = {
   MERAH: {
     bg: "bg-deep", border: "border-deep", text: "text-bright",
-    message: "Zona Merah — Jalur Hijau. Usaha komersial dilarang di lokasi ini (Perda DKI No. 8/2007). Risiko penertiban Satpol PP.",
+    message: "Zona Merah: Jalur Hijau. Usaha komersial dilarang di lokasi ini (Perda DKI No. 8/2007). Risiko penertiban Satpol PP.",
   },
   KUNING: {
     bg: "bg-bright", border: "border-deep", text: "text-deep",
-    message: "Zona Kuning — Penggunaan campuran. Diperlukan izin khusus untuk usaha komersial.",
+    message: "Zona Kuning: Penggunaan campuran. Diperlukan izin khusus untuk usaha komersial.",
   },
   HIJAU: {
     bg: "bg-mist", border: "border-deep", text: "text-deep",
-    message: "Zona Hijau — Kawasan komersial. Lokasi diizinkan untuk usaha.",
+    message: "Zona Hijau: Kawasan komersial. Lokasi diizinkan untuk usaha.",
   },
 };
 

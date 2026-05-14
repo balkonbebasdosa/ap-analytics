@@ -31,7 +31,7 @@ export default function Step4Goals() {
       <div>
         <h2 className="text-lg font-bold text-foreground">What are your strategic goals?</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Select your primary objectives — these calibrate how AP Analytics weights your results.
+          Select your primary objectives. These calibrate how AP Analytics weights your results.
         </p>
       </div>
 
