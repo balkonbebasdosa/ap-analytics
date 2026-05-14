@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
@@ -5,6 +6,7 @@ import { HexButton } from "@/components/ui/HexButton";
 import { PaletteScope } from "@/components/ui/PaletteScope";
 import { SectionEyebrow, MonoLabel } from "@/components/ui/MonoLabel";
 import { featurePreviews } from "@/components/landing/FeaturePreviews";
+import { stepPreviews } from "@/components/landing/StepPreviews";
 
 /* ──────────────────────────────────────────────────────────────────────────
    Content
@@ -149,6 +151,100 @@ function LandingNav() {
         </div>
       </div>
     </nav>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Step card — collapsed by default, expands on hover to reveal a demo
+   ────────────────────────────────────────────────────────────────────── */
+function StepCard({
+  step, index, delay,
+}: {
+  step: { num: string; title: string; desc: string };
+  index: number;
+  delay: number;
+}) {
+  const [hovered, setHovered] = useState(false);
+  const Demo = stepPreviews[index];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className="compartment-inner step-card"
+      style={{
+        flex: hovered ? "2.4 1 0%" : "1 1 0%",
+        display: "flex", flexDirection: "row",
+        gap: hovered ? "1.4rem" : "0rem",
+        minHeight: "16rem",
+        overflow: "hidden",
+        background: hovered ? "var(--soft)" : "var(--cream)",
+        transition:
+          "flex 0.4s var(--transition-color-easing), gap 0.4s var(--transition-color-easing), background 0.3s var(--transition-color-easing)",
+        cursor: "default",
+      }}
+    >
+      {/* Text column */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "1rem", flex: "1 1 0%", minWidth: 0 }}>
+        <MonoLabel size="xs" tone="ink" style={{ opacity: 0.55 }}>{step.num}</MonoLabel>
+        <div
+          className="font-display"
+          style={{
+            fontSize: "clamp(2.4rem, 4vw, 3.6rem)",
+            fontWeight: 800,
+            lineHeight: 0.95,
+            letterSpacing: "-0.04em",
+            color: "var(--deep)",
+          }}
+        >
+          {step.num}
+        </div>
+        <div
+          style={{
+            fontFamily: "'Inter', system-ui, sans-serif",
+            fontSize: "1.05rem",
+            fontWeight: 600,
+            lineHeight: 1.2,
+            color: "var(--deep)",
+          }}
+        >
+          {step.title}
+        </div>
+        <p className="serif-body" style={{ fontSize: "0.92rem", lineHeight: 1.5, opacity: 0.78 }}>
+          {step.desc}
+        </p>
+
+        <div style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 6 }}>
+          <span style={{ width: 5, height: 5, borderRadius: 999, background: "var(--bright)", flexShrink: 0 }} />
+          <span style={{
+            fontFamily: "'Inter', system-ui, sans-serif",
+            fontSize: 9, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase",
+            color: "var(--deep)", opacity: 0.5,
+          }}>
+            {hovered ? "Live preview" : "Hover to preview"}
+          </span>
+        </div>
+      </div>
+
+      {/* Demo column — expands to the right on hover */}
+      <div
+        style={{
+          flex: hovered ? "0 0 240px" : "0 0 0px",
+          display: "flex", alignItems: "center",
+          overflow: "hidden",
+          opacity: hovered ? 1 : 0,
+          transition: "flex 0.4s var(--transition-color-easing), opacity 0.3s ease",
+        }}
+      >
+        <div style={{ width: 240 }}>
+          <Demo active={hovered} />
+        </div>
+      </div>
+    </motion.div>
   );
 }
 
@@ -358,53 +454,14 @@ export default function LandingPage() {
 
           <div
             style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(4, 1fr)",
+              display: "flex",
               gap: "0.8rem",
+              alignItems: "stretch",
             }}
             className="step-grid"
           >
             {steps.map((step, i) => (
-              <motion.div
-                key={step.num}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.06 }}
-                className="compartment-inner"
-                style={{
-                  display: "flex", flexDirection: "column",
-                  gap: "1rem", minHeight: "16rem",
-                }}
-              >
-                <MonoLabel size="xs" tone="ink" style={{ opacity: 0.55 }}>{step.num}</MonoLabel>
-                <div
-                  className="font-display"
-                  style={{
-                    fontSize: "clamp(2.4rem, 4vw, 3.6rem)",
-                    fontWeight: 800,
-                    lineHeight: 0.95,
-                    letterSpacing: "-0.04em",
-                    color: "var(--deep)",
-                  }}
-                >
-                  {step.num}
-                </div>
-                <div
-                  style={{
-                    fontFamily: "'Inter', system-ui, sans-serif",
-                    fontSize: "1.05rem",
-                    fontWeight: 600,
-                    lineHeight: 1.2,
-                    color: "var(--deep)",
-                  }}
-                >
-                  {step.title}
-                </div>
-                <p className="serif-body" style={{ fontSize: "0.92rem", lineHeight: 1.5, opacity: 0.78 }}>
-                  {step.desc}
-                </p>
-              </motion.div>
+              <StepCard key={step.num} step={step} index={i} delay={i * 0.06} />
             ))}
           </div>
         </section>
@@ -548,12 +605,12 @@ export default function LandingPage() {
 
       <style>{`
         @media (max-width: 1024px) {
-          .step-grid    { grid-template-columns: 1fr 1fr !important; }
+          .step-grid    { flex-direction: column !important; }
+          .step-card    { flex: 0 0 auto !important; }
           .feature-grid { grid-template-columns: 1fr 1fr !important; }
           .about-grid   { grid-template-columns: 1fr !important; gap: 1.4rem !important; }
         }
         @media (max-width: 640px) {
-          .step-grid    { grid-template-columns: 1fr !important; }
           .feature-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
