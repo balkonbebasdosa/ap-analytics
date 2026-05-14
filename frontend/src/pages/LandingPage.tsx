@@ -11,7 +11,6 @@ import { SectionEyebrow, MonoLabel } from "@/components/ui/MonoLabel";
 
 const stats = [
   { value: "0.5–10km", label: "Radius scan" },
-  { value: "Gemini",   label: "AI engine" },
   { value: "Real-time",label: "Places data" },
   { value: "0 IDR",    label: "Forever" },
 ];
@@ -214,6 +213,29 @@ export default function LandingPage() {
 
             <div
               style={{
+                marginTop: "2rem",
+                display: "flex", flexWrap: "wrap",
+                alignItems: "center", justifyContent: "center",
+                gap: "clamp(1.2rem, 3vw, 2.4rem)",
+              }}
+            >
+              {[
+                { src: "/images/ugmHitam.png", alt: "UGM", height: 48 },
+                { src: "/images/DTETI.png", alt: "DTETI", height: 48 },
+                { src: "/images/AiConnect.png", alt: "AI Connect", height: 32 },
+                { src: "/images/FINDIT.png", alt: "FindIT", height: 48 },
+              ].map((logo) => (
+                <img
+                  key={logo.src}
+                  src={logo.src}
+                  alt={logo.alt}
+                  style={{ height: logo.height, width: "auto", objectFit: "contain" }}
+                />
+              ))}
+            </div>
+
+            <div
+              style={{
                 marginTop: "3rem",
                 display: "flex", flexWrap: "wrap",
                 alignItems: "center", justifyContent: "center",
@@ -234,7 +256,7 @@ export default function LandingPage() {
               style={{
                 marginTop: "4rem",
                 display: "grid",
-                gridTemplateColumns: "repeat(4, 1fr)",
+                gridTemplateColumns: "repeat(3, 1fr)",
                 gap: "0.6rem",
                 background: "var(--cream)",
                 padding: "0.8rem",
