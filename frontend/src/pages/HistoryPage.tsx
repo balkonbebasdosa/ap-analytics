@@ -12,9 +12,9 @@ import { MonoLabel } from "@/components/ui/MonoLabel";
 
 /* Zone label → tone mapping. All within the green family. */
 const ZONE_CHIP: Record<string, { bg: string; fg: string }> = {
-  MERAH:  { bg: "var(--deep)",   fg: "var(--bright)" },
-  KUNING: { bg: "var(--bright)", fg: "var(--deep)" },
-  HIJAU:  { bg: "var(--mist)",   fg: "var(--deep)" },
+  MERAH:  { bg: "#F87171", fg: "#2B0F0F" },
+  KUNING: { bg: "#FACC15", fg: "#2F2600" },
+  HIJAU:  { bg: "#86EFAC", fg: "#12351F" },
 };
 
 const STATUS_CHIP: Record<BusinessProfile["status"], { bg: string; fg: string }> = {
@@ -166,8 +166,11 @@ export default function HistoryPage() {
           ) : (
             <div style={{
               display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
+              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 360px), 1fr))",
               gap: "0.8rem",
+              width: "100%",
+              minWidth: 0,
+              overflow: "hidden",
             }} className="history-grid">
               {profiles.map((profile, i) => {
                 const result = profile.analysisResult as AnalysisResult | null;
@@ -184,6 +187,8 @@ export default function HistoryPage() {
                     style={{
                       display: "flex", flexDirection: "column",
                       gap: "0.9rem",
+                      minWidth: 0,
+                      overflow: "hidden",
                       transition: "background 200ms",
                     }}
                     onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "var(--soft)"; }}
@@ -251,12 +256,13 @@ export default function HistoryPage() {
                     </div>
 
                     {/* Meta */}
-                    <div className="compartment-well" style={{ padding: "0.65rem 0.85rem", display: "flex", flexDirection: "column", gap: "0.3rem" }}>
+                    <div className="compartment-well" style={{ padding: "0.65rem 0.85rem", display: "flex", flexDirection: "column", gap: "0.3rem", minWidth: 0, overflow: "hidden" }}>
                       <div style={{
                         display: "flex", alignItems: "center", gap: 6,
                         fontFamily: "'Inter', system-ui, sans-serif",
                         fontSize: 11, fontWeight: 500, letterSpacing: "0.04em",
                         color: "var(--deep)", opacity: 0.72,
+                        minWidth: 0,
                       }}>
                         <MapPin size={11} style={{ flexShrink: 0 }} />
                         <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
@@ -268,6 +274,7 @@ export default function HistoryPage() {
                         fontFamily: "'Inter', system-ui, sans-serif",
                         fontSize: 11, fontWeight: 500, letterSpacing: "0.04em",
                         color: "var(--deep)", opacity: 0.72,
+                        minWidth: 0,
                       }}>
                         <Calendar size={11} style={{ flexShrink: 0 }} />
                         {new Date(profile.createdAt).toLocaleDateString("id-ID", {
@@ -329,7 +336,7 @@ export default function HistoryPage() {
       </main>
 
       <style>{`
-        @media (max-width: 1024px) { .history-grid { grid-template-columns: 1fr 1fr !important; } }
+        @media (max-width: 1024px) { .history-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)) !important; } }
         @media (max-width: 640px)  { .history-grid { grid-template-columns: 1fr !important; } }
         @keyframes spin { to { transform: rotate(360deg); } }
       `}</style>

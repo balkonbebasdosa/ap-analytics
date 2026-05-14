@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useLayoutEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
@@ -21,8 +21,8 @@ const stats = [
 const steps = [
   { num: "01", title: "Jelaskan bisnis Anda",   desc: "Kategori, konsep, dan produk unggulan. Kami tangkap gambaran bisnis Anda." },
   { num: "02", title: "Tandai lokasi Anda",     desc: "Tandai lokasi rencana di peta. Kami scan sekelilingnya." },
-  { num: "03", title: "Tentukan radius dampak", desc: "Dari 0,5 km hingga 10 km — zona persaingan yang Anda pedulikan." },
-  { num: "04", title: "Baca dashboard Anda",    desc: "Skor BVI, peta pesaing, SWOT, dan roadmap strategis — seketika." },
+  { num: "03", title: "Tentukan radius dampak", desc: "Dari 0,5 km hingga 10 km. Zona persaingan yang Anda pedulikan." },
+  { num: "04", title: "Baca dashboard Anda",    desc: "Skor BVI, peta pesaing, SWOT, dan roadmap strategis, seketika." },
 ];
 
 const features = [
@@ -30,7 +30,7 @@ const features = [
   { num: "02", title: "Identifikasi Celah Anda", desc: "Menganalisis pesaing dan menghasilkan SWOT khusus bisnis Anda." },
   { num: "03", title: "Skor BVI",                desc: "Skor kelayakan prediktif berdasarkan kepadatan persaingan dan sinyal lokasi." },
   { num: "04", title: "Roadmap Strategis",       desc: "Langkah nyata soal diferensiasi, harga, dan alokasi anggaran pemasaran." },
-  { num: "05", title: "Keputusan Berbasis Data", desc: "Data Google Places real-time — intelijen pesaing yang akurat, tanpa tebak-tebakan." },
+  { num: "05", title: "Keputusan Berbasis Data", desc: "Data Google Places real-time. Intelijen pesaing yang akurat, tanpa tebak-tebakan." },
   { num: "06", title: "Analitik Visual",         desc: "Grafik dan dashboard yang menyampaikan insight dalam sekejap." },
 ];
 
@@ -86,7 +86,7 @@ function FloatingScorePreview() {
             fontSize: 12, lineHeight: 1.3, fontWeight: 500,
             color: "var(--deep)",
           }}>
-            Cukup layak — diferensiasi adalah kuncinya.
+            Cukup layak. Diferensiasi adalah kuncinya.
           </div>
         </div>
       </div>
@@ -142,6 +142,7 @@ function LandingNav() {
           <div className="landing-nav-actions" style={{ display: "flex", alignItems: "center", gap: "1.4rem" }}>
             <a href="#how"      className="mono-nav hover:opacity-60 nav-anchor">Cara Kerja</a>
             <a href="#features" className="mono-nav hover:opacity-60 nav-anchor">Fitur</a>
+            <Link to="/about"   className="mono-nav hover:opacity-60 nav-anchor">Tentang</Link>
             <a href="#start"    className="mono-nav hover:opacity-60 nav-anchor">Mulai</a>
             <Link to="/auth" className="mono-nav nav-anchor" style={{ opacity: 0.7 }}>Masuk</Link>
             <HexButton as="a" href="/auth?mode=register" variant="solid">
@@ -166,8 +167,6 @@ function StepCard({
 }) {
   const [hovered, setHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [textWidth, setTextWidth] = useState<number | null>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
   const Demo = stepPreviews[index];
 
   useEffect(() => {
@@ -178,34 +177,15 @@ function StepCard({
     return () => mq.removeEventListener("change", update);
   }, []);
 
-  /* Freeze the text column at the collapsed card width so it never reflows —
-     when a card shrinks, the card edge clips the text instead of resizing it. */
-  useLayoutEffect(() => {
-    if (isMobile) { setTextWidth(null); return; }
-    const measure = () => {
-      const el = cardRef.current;
-      if (!el || hovered) return;
-      const cs = getComputedStyle(el);
-      const pad = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
-      setTextWidth(el.clientWidth - pad);
-    };
-    measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, [isMobile, hovered]);
-
   /* On touch/mobile there's no hover — the demo is always shown, stacked below. */
   const expanded = isMobile || hovered;
 
   const textColStyle: React.CSSProperties = isMobile
     ? { flex: "0 0 auto", width: "100%" }
-    : textWidth != null
-      ? { flex: "0 0 auto", width: textWidth }
-      : { flex: "1 1 0%", minWidth: 0 };
+    : { flex: "1 1 0%", minWidth: 0, maxWidth: "100%" };
 
   return (
     <motion.div
-      ref={cardRef}
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -226,17 +206,27 @@ function StepCard({
         cursor: "default",
       }}
     >
-      {/* Text column — frozen width on desktop so it clips rather than reflows */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "1rem", ...textColStyle }}>
+      {/* Text column flexes with the card so collapsed text shrinks cleanly. */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: expanded ? "1rem" : "0.75rem",
+          overflow: "hidden",
+          transition: "gap 0.3s ease",
+          ...textColStyle,
+        }}
+      >
         <MonoLabel size="xs" tone="ink" style={{ opacity: 0.55 }}>{step.num}</MonoLabel>
         <div
           className="font-display"
           style={{
-            fontSize: "clamp(2.4rem, 4vw, 3.6rem)",
+            fontSize: expanded ? "3.2rem" : "2.35rem",
             fontWeight: 800,
             lineHeight: 0.95,
             letterSpacing: "-0.04em",
             color: "var(--deep)",
+            transition: "font-size 0.3s ease",
           }}
         >
           {step.num}
@@ -244,15 +234,27 @@ function StepCard({
         <div
           style={{
             fontFamily: "'Inter', system-ui, sans-serif",
-            fontSize: "1.05rem",
+            fontSize: expanded ? "1.05rem" : "0.95rem",
             fontWeight: 600,
             lineHeight: 1.2,
             color: "var(--deep)",
+            overflowWrap: "anywhere",
+            transition: "font-size 0.3s ease",
           }}
         >
           {step.title}
         </div>
-        <p className="serif-body" style={{ fontSize: "0.92rem", lineHeight: 1.5, opacity: 0.78 }}>
+        <p
+          className="serif-body"
+          style={{
+            fontSize: expanded ? "0.92rem" : "0.82rem",
+            lineHeight: 1.45,
+            opacity: expanded ? 0.78 : 0.62,
+            maxHeight: expanded ? "7rem" : "3.6rem",
+            overflow: "hidden",
+            transition: "font-size 0.3s ease, max-height 0.3s ease, opacity 0.3s ease",
+          }}
+        >
           {step.desc}
         </p>
 
@@ -344,7 +346,7 @@ export default function LandingPage() {
               }}
             >
               AP Analytics mengevaluasi lokasi bisnis Anda menggunakan data pesaing nyata
-              dan wawasan strategis dari AI — sepenuhnya gratis.
+              dan wawasan strategis dari AI, sepenuhnya gratis.
             </p>
 
             <div
@@ -636,6 +638,7 @@ export default function LandingPage() {
           <div style={{ display: "flex", gap: "1.4rem" }}>
             <a href="#how"      className="mono-nav hover:opacity-60">Cara Kerja</a>
             <a href="#features" className="mono-nav hover:opacity-60">Fitur</a>
+            <Link to="/about"   className="mono-nav hover:opacity-60">Tentang</Link>
             <a href="#start"    className="mono-nav hover:opacity-60">Mulai</a>
           </div>
         </footer>

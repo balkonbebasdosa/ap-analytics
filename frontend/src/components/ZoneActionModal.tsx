@@ -145,16 +145,16 @@ const APPEAL_STEPS: Record<ZoneLabel, { step: string; detail: string }[]> = {
 };
 
 const ZONE_COLOR: Record<ZoneLabel, { panel: string; ink: string; accent: string }> = {
-  MERAH:   { panel: "var(--deep)",   ink: "var(--cream)",  accent: "var(--bright)" },
-  KUNING:  { panel: "var(--bright)", ink: "var(--deep)",   accent: "var(--deep)" },
-  HIJAU:   { panel: "var(--deep)",   ink: "var(--cream)",  accent: "var(--bright)" },
+  MERAH:   { panel: "#F87171", ink: "#2B0F0F", accent: "#7F1D1D" },
+  KUNING:  { panel: "#FACC15", ink: "#2F2600", accent: "#713F12" },
+  HIJAU:   { panel: "#86EFAC", ink: "#12351F", accent: "#166534" },
   UNKNOWN: { panel: "var(--soft)",   ink: "var(--deep)",   accent: "var(--deep)" },
 };
 
 const ZONE_TITLE: Record<ZoneLabel, string> = {
-  MERAH:   "Zona Merah — Tindakan & Panduan",
-  KUNING:  "Zona Kuning — Tindakan & Panduan",
-  HIJAU:   "Zona Hijau — Tindakan & Panduan",
+  MERAH:   "Zona Merah · Tindakan & Panduan",
+  KUNING:  "Zona Kuning · Tindakan & Panduan",
+  HIJAU:   "Zona Hijau · Tindakan & Panduan",
   UNKNOWN: "Status Zonasi Tidak Diketahui",
 };
 
@@ -250,7 +250,7 @@ export default function ZoneActionModal({ zoneLabel, onClose }: ZoneActionModalP
               <AlertTriangle size={18} style={{ color: "var(--deep)", flexShrink: 0, marginTop: 2 }} />
               <div>
                 <div style={{ ...monoStyle, color: "var(--deep)", marginBottom: "0.5rem" }}>
-                  Zona Dilarang — Tidak Ada Izin yang Tersedia
+                  Zona Dilarang · Tidak Ada Izin yang Tersedia
                 </div>
                 <p style={{
                   fontFamily: "'Inter', system-ui, sans-serif",

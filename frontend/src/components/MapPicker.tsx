@@ -45,6 +45,7 @@ export default function MapPicker({
   const onAddressChangeRef = useRef(onAddressChange);
   const zoneDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevSelectedRef = useRef<{ lat: number; lng: number } | null>(null);
+  const radiusRef = useRef(radiusMeters);
 
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -53,6 +54,7 @@ export default function MapPicker({
 
   useEffect(() => { onLocationChangeRef.current = onLocationChange; }, [onLocationChange]);
   useEffect(() => { onAddressChangeRef.current = onAddressChange; }, [onAddressChange]);
+  useEffect(() => { radiusRef.current = radiusMeters; }, [radiusMeters]);
 
   useEffect(() => {
     const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string;
@@ -68,10 +70,10 @@ export default function MapPicker({
   useEffect(() => {
     if (!isLoaded || !mapRef.current) return;
 
-    const center = latitude && longitude ? { lat: latitude, lng: longitude } : DEFAULT_CENTER;
+    const center = latitude != null && longitude != null ? { lat: latitude, lng: longitude } : DEFAULT_CENTER;
     const map = new google.maps.Map(mapRef.current, {
       center,
-      zoom: latitude && longitude ? 15 : 12,
+      zoom: latitude != null && longitude != null ? 15 : 12,
       mapTypeControl: false,
       streetViewControl: false,
       fullscreenControl: false,
@@ -81,15 +83,15 @@ export default function MapPicker({
     });
     mapInstanceRef.current = map;
 
-    if (latitude && longitude) {
-      placeMarkerAndCircle(map, { lat: latitude, lng: longitude });
+    if (latitude != null && longitude != null) {
+      placeMarkerAndCircle(map, { lat: latitude, lng: longitude }, true);
     }
 
     clickListenerRef.current = map.addListener("click", (e: google.maps.MapMouseEvent) => {
       if (e.latLng) {
         const lat = e.latLng.lat();
         const lng = e.latLng.lng();
-        placeMarkerAndCircle(map, { lat, lng });
+        placeMarkerAndCircle(map, { lat, lng }, true);
         onLocationChangeRef.current(lat, lng);
         lookupZoneDebounced(lat, lng);
         reverseGeocode(lat, lng);
@@ -116,14 +118,15 @@ export default function MapPicker({
       prevSelectedRef.current?.lng === selectedLocation.lng
     ) return;
     prevSelectedRef.current = selectedLocation;
-    mapInstanceRef.current.panTo({ lat: selectedLocation.lat, lng: selectedLocation.lng });
-    mapInstanceRef.current.setZoom(16);
-    placeMarkerAndCircle(mapInstanceRef.current, { lat: selectedLocation.lat, lng: selectedLocation.lng });
+    placeMarkerAndCircle(mapInstanceRef.current, { lat: selectedLocation.lat, lng: selectedLocation.lng }, true);
     lookupZoneDebounced(selectedLocation.lat, selectedLocation.lng);
   }, [selectedLocation]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (circleRef.current) circleRef.current.setRadius(radiusMeters);
+    radiusRef.current = radiusMeters;
+    if (!circleRef.current) return;
+    circleRef.current.setRadius(radiusMeters);
+    fitCircleToMap();
   }, [radiusMeters]);
 
   function lookupZoneDebounced(lat: number, lng: number) {
@@ -149,7 +152,20 @@ export default function MapPicker({
       .catch(() => {});
   }
 
-  function placeMarkerAndCircle(map: google.maps.Map, pos: { lat: number; lng: number }) {
+  function fitCircleToMap() {
+    const map = mapInstanceRef.current;
+    const circle = circleRef.current;
+    if (!map || !circle) return;
+    const bounds = circle.getBounds();
+    if (!bounds) return;
+    map.fitBounds(bounds, 42);
+  }
+
+  function placeMarkerAndCircle(
+    map: google.maps.Map,
+    pos: { lat: number; lng: number },
+    fitRadius = false,
+  ) {
     if (markerRef.current) markerRef.current.setMap(null);
     if (circleRef.current) circleRef.current.setMap(null);
 
@@ -161,7 +177,7 @@ export default function MapPicker({
     });
 
     const circle = new google.maps.Circle({
-      center: pos, radius: radiusMeters, map,
+      center: pos, radius: radiusRef.current, map,
       fillColor: "#1f2e15", fillOpacity: 0.08,
       strokeColor: "#1f2e15", strokeOpacity: 0.8, strokeWeight: 2,
     });
@@ -171,14 +187,17 @@ export default function MapPicker({
         const lat = e.latLng.lat();
         const lng = e.latLng.lng();
         circle.setCenter({ lat, lng });
+        marker.setPosition({ lat, lng });
         onLocationChangeRef.current(lat, lng);
         lookupZoneDebounced(lat, lng);
         reverseGeocode(lat, lng);
+        fitCircleToMap();
       }
     });
 
     markerRef.current = marker;
     circleRef.current = circle;
+    if (fitRadius) fitCircleToMap();
   }
 
   if (loadError) {

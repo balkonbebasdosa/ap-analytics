@@ -7,13 +7,31 @@ import { businessApi, analyzeApi } from "@/lib/api";
 import { STRATEGIC_GOALS } from "@/types";
 import type { Product } from "@/types";
 import { formatPrice, formatDistance } from "@/lib/utils";
-import { ArrowLeft, ArrowRight, LogOut, Plus, Trash2, Sparkles, MapPin } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  BriefcaseBusiness,
+  Car,
+  Clapperboard,
+  Dumbbell,
+  HeartPulse,
+  Laptop,
+  LogOut,
+  Plus,
+  ShoppingBag,
+  Sparkles,
+  Store,
+  Trash2,
+  Utensils,
+  Wrench,
+  MapPin,
+} from "lucide-react";
 import MapPicker from "@/components/MapPicker";
 import { HexButton } from "@/components/ui/HexButton";
 import { PaletteScope } from "@/components/ui/PaletteScope";
 import { MonoLabel } from "@/components/ui/MonoLabel";
 import {
-  MonoInput, MonoTextarea, PillToggle, RangeSlider, InputLabel, Fieldset,
+  MonoInput, RangeSlider, InputLabel, Fieldset,
 } from "@/components/ui/wizard-primitives";
 
 function WizardHeader({ consultNum }: { consultNum: number | null }) {
@@ -166,16 +184,28 @@ const CATEGORY_SUBCATEGORIES: Record<string, { label: string; value: string }[]>
   ]
 };
 
-const PARENT_ICONS: Record<string, string> = {
-  "F&B": "🍽️",
-  "Retail": "🛍️",
-  "Services": "🔧",
-  "Health & Beauty": "💄",
-  "Technology": "💻",
-  "Fitness, Sports & Leisure": "🏋️",
-  "Entertainment & Nightlife": "🎬",
-  "Automotive & Transportation": "🚗",
-  "Professional Services": "💼",
+const PARENT_ICONS: Record<string, React.ElementType> = {
+  "F&B": Utensils,
+  "Retail": ShoppingBag,
+  "Services": Wrench,
+  "Health & Beauty": HeartPulse,
+  "Technology": Laptop,
+  "Fitness, Sports & Leisure": Dumbbell,
+  "Entertainment & Nightlife": Clapperboard,
+  "Automotive & Transportation": Car,
+  "Professional Services": BriefcaseBusiness,
+};
+
+const PARENT_ICON_COLORS: Record<string, string> = {
+  "F&B": "#B45309",
+  "Retail": "#0F766E",
+  "Services": "#475569",
+  "Health & Beauty": "#BE123C",
+  "Technology": "#2563EB",
+  "Fitness, Sports & Leisure": "#15803D",
+  "Entertainment & Nightlife": "#7C3AED",
+  "Automotive & Transportation": "#DC2626",
+  "Professional Services": "#6D4C41",
 };
 
 function CategoryPicker({ value, onChange }: { value: string; onChange: (val: string) => void }) {
@@ -214,6 +244,10 @@ function CategoryPicker({ value, onChange }: { value: string; onChange: (val: st
         {parents.map((p) => {
           const isActive = localParent === p;
           return (
+            (() => {
+              const Icon = PARENT_ICONS[p] ?? Store;
+              const iconColor = PARENT_ICON_COLORS[p] ?? "currentColor";
+              return (
             <button
               key={p}
               type="button"
@@ -229,8 +263,10 @@ function CategoryPicker({ value, onChange }: { value: string; onChange: (val: st
                 transition: "background 150ms, color 150ms",
               }}
             >
-              <span>{PARENT_ICONS[p]}</span> {p}
+              <Icon size={14} strokeWidth={1.8} color={iconColor} /> {p}
             </button>
+              );
+            })()
           );
         })}
       </div>
@@ -290,9 +326,6 @@ function PanelOne() {
   const updateProduct = (i: number, field: keyof Product, value: string | number) => {
     setProducts(products.map((p, idx) => (idx === i ? { ...p, [field]: value } : p)));
   };
-  const toggleGoal = (id: string) =>
-    setGoals((prev) => (prev.includes(id) ? prev.filter((g) => g !== id) : [...prev, id]));
-
   const handleContinue = () => {
     if (!name.trim()) return setError("Nama bisnis wajib diisi.");
     if (!category) return setError("Pilih kategori.");
@@ -398,7 +431,7 @@ function PanelOne() {
               >
                 <input
                   type="text"
-                  placeholder={`Item ${i + 1} — mis. Kopi Susu Spesial`}
+                  placeholder={`Item ${i + 1}, mis. Kopi Susu Spesial`}
                   value={product.name}
                   onChange={(e) => updateProduct(i, "name", e.target.value)}
                   style={{
@@ -556,7 +589,7 @@ function PanelOne() {
           textTransform: "uppercase",
           color: "var(--bright)", opacity: 0.85,
         }}>
-          Panel 01 — lengkapi semua kolom wajib untuk melanjutkan.
+          Panel 01. Lengkapi semua kolom wajib untuk melanjutkan.
         </span>
         <HexButton onClick={handleContinue}>
           Lanjut ke lokasi <ArrowRight size={14} />
@@ -597,23 +630,34 @@ function PanelTwo() {
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [error, setError] = useState("");
   const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const searchRequestRef = useRef(0);
   const navigate = useNavigate();
 
   const isSubmitting = submitPhase !== "idle";
 
+  useEffect(() => {
+    return () => {
+      if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+    };
+  }, []);
+
   const handleAddressInput = (query: string) => {
     setAddressQuery(query);
+    const requestId = ++searchRequestRef.current;
     if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
-    if (query.trim().length < 3) { setSuggestions([]); return; }
+    const normalizedQuery = query.trim().toLocaleLowerCase("id-ID");
+    if (normalizedQuery.length < 3) { setSuggestions([]); return; }
     searchDebounceRef.current = setTimeout(async () => {
       try {
         const resp = await fetch(
-          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=5&countrycodes=id`,
+          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(normalizedQuery)}&format=json&limit=5&countrycodes=id`,
           { headers: { "Accept-Language": "id" } }
         );
         const results: NominatimResult[] = await resp.json();
+        if (requestId !== searchRequestRef.current) return;
         setSuggestions(results);
       } catch {
+        if (requestId !== searchRequestRef.current) return;
         setSuggestions([]);
       }
     }, 600);
@@ -622,6 +666,8 @@ function PanelTwo() {
   const handleSuggestionSelect = (s: NominatimResult) => {
     const lat = parseFloat(s.lat);
     const lng = parseFloat(s.lon);
+    searchRequestRef.current += 1;
+    if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
     setAddress(s.display_name);
     setAddressQuery(s.display_name);
     setSuggestions([]);
@@ -632,14 +678,19 @@ function PanelTwo() {
   };
 
   const handleLocationChange = (lat: number, lng: number) => {
+    searchRequestRef.current += 1;
+    if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
     setLatitude(lat);
     setLongitude(lng);
+    setSuggestions([]);
     setError("");
   };
 
   const handleAddressChange = (addr: string) => {
+    searchRequestRef.current += 1;
     setAddress(addr);
     setAddressQuery(addr);
+    setSuggestions([]);
   };
 
   const handleSubmit = async () => {
@@ -653,7 +704,7 @@ function PanelTwo() {
     setError("");
     try {
       const { data: profileData } = await businessApi.create({
-        ...data, latitude, longitude, radiusMeters,
+        ...data, latitude, longitude, radiusMeters, address,
       });
       setCompletedSteps([0]);
       setSubmitPhase("validating");
@@ -803,7 +854,7 @@ function PanelTwo() {
         panel={2}
         eyebrow="Lokasi · Radius · Kirim"
         title="Di mana lokasinya, dan sejauh apa kita mencari?"
-        subtitle="Tandai pin di lokasi yang Anda rencanakan. Lalu atur radius — itu adalah zona yang kami scan untuk pesaing, permintaan, dan batasan zonasi."
+        subtitle="Tandai pin di lokasi yang Anda rencanakan. Lalu atur radius. Itu adalah zona yang kami scan untuk pesaing, permintaan, dan batasan zonasi."
       />
 
       {/* ── Map ────────────────────────────────────────────────────────── */}
@@ -950,7 +1001,7 @@ function PanelTwo() {
         title="Konfirmasi dan jalankan."
         description="Satu kali lihat terakhir sebelum kami membuat analisis Anda."
       >
-        <ReviewCard data={data} latitude={latitude} longitude={longitude} radiusMeters={radiusMeters} />
+        <ReviewCard data={data} address={address} latitude={latitude} longitude={longitude} radiusMeters={radiusMeters} />
       </Fieldset>
 
       {error && <ErrorBanner>{error}</ErrorBanner>}
@@ -970,8 +1021,9 @@ function PanelTwo() {
 /* ──────────────────────────────────────────────────────────────────────────
    ReviewCard — striped rows, no borders
    ────────────────────────────────────────────────────────────────────── */
-function ReviewCard({ data, latitude, longitude, radiusMeters }: {
+function ReviewCard({ data, address, latitude, longitude, radiusMeters }: {
   data: ReturnType<typeof useWizard>["data"];
+  address: string;
   latitude: number | null; longitude: number | null; radiusMeters: number;
 }) {
   const rows: { label: string; value: React.ReactNode }[] = [
@@ -992,6 +1044,10 @@ function ReviewCard({ data, latitude, longitude, radiusMeters }: {
     },
     {
       label: "Lokasi",
+      value: address || data.address || "Alamat belum tersedia",
+    },
+    {
+      label: "Koordinat",
       value: latitude && longitude ? `${latitude.toFixed(5)}, ${longitude.toFixed(5)}` : "—",
     },
     { label: "Radius", value: formatDistance(radiusMeters) },
@@ -1071,6 +1127,12 @@ export default function WizardPage() {
       .then(({ data }) => setConsultNum((data.profiles?.length ?? 0) + 1))
       .catch(() => setConsultNum(1));
   }, []);
+
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    });
+  }, [step]);
 
   return (
     <PaletteScope palette="green" as="div" className="paper-surface" style={{ minHeight: "100vh" }}>

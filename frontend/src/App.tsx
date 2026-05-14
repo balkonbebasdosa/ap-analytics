@@ -9,6 +9,7 @@ import WizardPage from "@/pages/WizardPage";
 import DashboardPage from "@/pages/DashboardPage";
 import HistoryPage from "@/pages/HistoryPage";
 import PricingPage from "@/pages/PricingPage";
+import AboutPage from "@/pages/AboutPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 import ErrorPage from "@/pages/ErrorPage";
 
@@ -42,6 +43,7 @@ function AppRoutes() {
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/pricing" element={<PricingPage />} />
+      <Route path="/about" element={<AboutPage />} />
       <Route path="/auth" element={<PublicRoute><AuthPage /></PublicRoute>} />
       <Route path="/welcome" element={<ProtectedRoute><WelcomePage /></ProtectedRoute>} />
       <Route path="/survey" element={<ProtectedRoute><WizardProvider><WizardPage /></WizardProvider></ProtectedRoute>} />

@@ -489,7 +489,7 @@ export default function DashboardPage() {
           anchor="C · COMPETITORS"
           count="03 / 04"
           title="Apa yang sudah ada di radius."
-          description="Titik pink adalah bisnis pesaing; titik gelap adalah lokasi kandidat Anda. Diurutkan berdasarkan tingkat ancaman — harga setara dulu, lalu kecocokan kategori, lalu jarak."
+          description="Titik pink adalah bisnis pesaing; titik gelap adalah lokasi kandidat Anda. Diurutkan berdasarkan tingkat ancaman: harga setara dulu, lalu kecocokan kategori, lalu jarak."
         >
           <div className="compartment-stack--tight" style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
             <CompetitorMap
@@ -630,7 +630,7 @@ export default function DashboardPage() {
           anchor="D · ROADMAP"
           count="04 / 04"
           title="Apa yang harus dilakukan."
-          description="Tiga pilar untuk diferensiasi, harga, dan visibilitas — langkah konkret berikutnya untuk lokasi ini."
+          description="Tiga pilar untuk diferensiasi, harga, dan visibilitas: langkah konkret berikutnya untuk lokasi ini."
         >
           <RoadmapCard roadmap={result.strategicRoadmap} />
         </Section>

@@ -1,38 +1,38 @@
 export const FEEDBACK_DICTIONARY: Record<string, { low: string; medium: string; high: string }> = {
   "Low-cost / Value": {
-    low: "A low-cost model faces significant hurdles here due to intense price competition or insufficient market volume. You must aggressively optimize your supply chain and consider relocating to a higher-traffic area to survive.",
-    medium: "Your value-based concept has moderate potential, but margins will be tight. Success depends on achieving high daily turnover and keeping overhead expenses strictly controlled.",
-    high: "Your low-cost model is highly viable in this area due to strong market demand and favorable demographic indicators. Focus on high-volume sales and operational efficiency to maximize your margins against nearby competitors."
+    low: "Model harga terjangkau menghadapi hambatan besar di lokasi ini karena persaingan harga yang ketat atau volume pasar yang belum cukup. Anda perlu mengoptimalkan rantai pasok secara agresif dan mempertimbangkan lokasi dengan lalu lintas yang lebih tinggi.",
+    medium: "Konsep berbasis nilai memiliki potensi sedang, tetapi margin akan cukup tipis. Keberhasilan bergantung pada perputaran harian yang tinggi dan pengendalian biaya operasional yang ketat.",
+    high: "Model harga terjangkau sangat layak di area ini berkat permintaan pasar yang kuat dan indikator demografis yang mendukung. Fokus pada volume penjualan tinggi dan efisiensi operasional untuk memaksimalkan margin dibanding pesaing sekitar."
   },
   "Premium / High-end": {
-    low: "The local demographics and current market density do not support a premium pricing strategy at this location. You risk severe underperformance unless you pivot to a more accessible price point or find a more affluent neighborhood.",
-    medium: "A high-end concept can survive here if you deliver exceptional, differentiated quality that justifies the price premium. Heavy investment in targeted marketing and customer experience will be essential to draw the right demographic.",
-    high: "This location is perfectly primed for a premium business model. High location appeal and affluent local indicators suggest customers are willing to pay a premium for superior quality and exclusivity."
+    low: "Demografi lokal dan kepadatan pasar saat ini belum mendukung strategi harga premium di lokasi ini. Risiko performa rendah cukup besar kecuali Anda beralih ke harga yang lebih terjangkau atau mencari kawasan dengan daya beli lebih tinggi.",
+    medium: "Konsep premium masih bisa bertahan di sini jika Anda menawarkan kualitas yang sangat berbeda dan sepadan dengan harga lebih tinggi. Investasi kuat pada pemasaran tertarget dan pengalaman pelanggan akan penting untuk menarik segmen yang tepat.",
+    high: "Lokasi ini sangat siap untuk model bisnis premium. Daya tarik lokasi yang tinggi dan indikator daya beli sekitar menunjukkan pelanggan berpotensi membayar lebih untuk kualitas unggul dan eksklusivitas."
   },
   "Fast Service / Quick turnaround": {
-    low: "Fast service relies on massive foot traffic, which this location severely lacks. The current competition density and low demand scores indicate this model will struggle to achieve the volume necessary for profitability.",
-    medium: "A quick-turnaround model is viable here, provided you can capture the peak-hour rush effectively. Streamlining your operations and offering convenient grab-and-go options will be the key to outperforming local competitors.",
-    high: "Exceptional conditions exist for a high-speed service model in this high-traffic area. The demand profile indicates a strong need for quick, reliable service, making this an ideal spot to maximize daily transaction volume."
+    low: "Layanan cepat membutuhkan arus pengunjung yang besar, sementara lokasi ini masih kekurangan hal tersebut. Kepadatan pesaing dan skor permintaan yang rendah menunjukkan model ini akan sulit mencapai volume yang dibutuhkan untuk profitabilitas.",
+    medium: "Model layanan cepat cukup layak di sini jika Anda mampu menangkap jam ramai secara efektif. Merampingkan operasional dan menawarkan opsi praktis siap ambil akan menjadi kunci untuk mengungguli pesaing lokal.",
+    high: "Kondisi area ini sangat mendukung model layanan cepat dengan lalu lintas tinggi. Profil permintaan menunjukkan kebutuhan kuat terhadap layanan yang cepat dan andal, sehingga lokasi ini ideal untuk memaksimalkan volume transaksi harian."
   },
   "Specialized / Niche": {
-    low: "The market demand for your highly specialized concept is dangerously low in this area. Without a broader appeal or a dedicated destination-shopper base, this location will likely lead to stagnation.",
-    medium: "Your niche concept has a fighting chance if you can build a strong, loyal community around your specific offering. You will need to rely heavily on digital marketing to pull customers from outside the immediate walking radius.",
-    high: "The data shows a massive gap in the market perfectly suited for your specialized business. The lack of direct competitors and high uniqueness score means you can quickly establish a monopoly in your specific niche."
+    low: "Permintaan pasar untuk konsep yang sangat spesifik masih terlalu rendah di area ini. Tanpa daya tarik yang lebih luas atau basis pelanggan tujuan yang kuat, lokasi ini berisiko membuat bisnis stagnan.",
+    medium: "Konsep niche Anda masih punya peluang jika mampu membangun komunitas yang loyal di sekitar penawaran spesifik tersebut. Anda perlu sangat mengandalkan pemasaran digital untuk menarik pelanggan dari luar radius jalan kaki terdekat.",
+    high: "Data menunjukkan celah pasar besar yang sangat cocok untuk bisnis spesialis Anda. Minimnya pesaing langsung dan skor keunikan yang tinggi membuat Anda berpeluang cepat mendominasi niche tersebut."
   },
   "Eco-friendly / Sustainable": {
-    low: "While admirable, the local market indicators suggest consumers here are highly price-sensitive and may not pay the premium associated with sustainable practices. Consider softening the eco-angle in favor of pure value to gain traction.",
-    medium: "Sustainability is a nice-to-have in this market, but it cannot be your only selling point. You must ensure your core product quality and pricing remain competitive with traditional businesses nearby to maintain steady revenue.",
-    high: "This area shows strong alignment with progressive, eco-conscious consumer trends. Your sustainable concept will serve as a massive differentiator, allowing you to capture a dedicated demographic willing to support green initiatives."
+    low: "Meskipun positif, indikator pasar lokal menunjukkan konsumen di sini sangat sensitif terhadap harga dan mungkin belum siap membayar lebih untuk praktik berkelanjutan. Pertimbangkan untuk menonjolkan nilai utama terlebih dahulu agar lebih mudah mendapat traksi.",
+    medium: "Keberlanjutan dapat menjadi nilai tambah di pasar ini, tetapi tidak bisa menjadi satu-satunya alasan pembelian. Pastikan kualitas produk inti dan harga tetap kompetitif dibanding bisnis tradisional di sekitar.",
+    high: "Area ini menunjukkan kecocokan kuat dengan tren konsumen yang progresif dan peduli lingkungan. Konsep berkelanjutan Anda dapat menjadi pembeda besar dan menarik segmen pelanggan yang siap mendukung inisiatif hijau."
   },
   "Innovative / Tech-driven": {
-    low: "The local market does not display the early-adopter traits necessary to support a highly innovative or tech-heavy concept. You may face significant friction in customer education and adoption at this specific location.",
-    medium: "Your tech-driven approach could streamline operations, but the customer-facing innovation might take time to catch on. Focus on using your tech to lower operational costs while keeping the user experience as familiar and accessible as possible.",
-    high: "The local demographic is highly receptive to modern, tech-forward business models. Your innovative approach will easily disrupt the traditional competitors in the area and attract a modern, convenience-seeking customer base."
+    low: "Pasar lokal belum menunjukkan karakter early adopter yang dibutuhkan untuk mendukung konsep yang sangat inovatif atau berbasis teknologi. Anda mungkin menghadapi hambatan besar dalam edukasi dan adopsi pelanggan di lokasi ini.",
+    medium: "Pendekatan berbasis teknologi dapat merampingkan operasional, tetapi inovasi yang langsung dirasakan pelanggan mungkin butuh waktu untuk diterima. Fokuskan teknologi untuk menurunkan biaya operasional sambil menjaga pengalaman pengguna tetap familiar dan mudah diakses.",
+    high: "Demografi lokal sangat terbuka terhadap model bisnis modern berbasis teknologi. Pendekatan inovatif Anda berpotensi mengganggu pesaing tradisional di area ini dan menarik pelanggan modern yang mencari kemudahan."
   },
   "Fallback": {
-    low: "The current market indicators suggest significant challenges for this location. High competition or low demand means you must carefully reevaluate your business strategy before proceeding.",
-    medium: "This location presents a moderate opportunity with a balanced risk profile. Success will depend heavily on strong operational execution and clear differentiation from existing competitors.",
-    high: "The data indicates highly favorable conditions for a new business in this area. Strong demand and manageable competition provide an excellent foundation for immediate growth and profitability."
+    low: "Indikator pasar saat ini menunjukkan tantangan besar untuk lokasi ini. Persaingan tinggi atau permintaan rendah berarti Anda perlu mengevaluasi ulang strategi bisnis dengan cermat sebelum melanjutkan.",
+    medium: "Lokasi ini menawarkan peluang sedang dengan profil risiko yang cukup seimbang. Keberhasilan akan sangat bergantung pada eksekusi operasional yang kuat dan diferensiasi yang jelas dari pesaing yang sudah ada.",
+    high: "Data menunjukkan kondisi yang sangat mendukung untuk bisnis baru di area ini. Permintaan yang kuat dan persaingan yang masih terkendali memberi fondasi baik untuk pertumbuhan dan profitabilitas awal."
   }
 };
 

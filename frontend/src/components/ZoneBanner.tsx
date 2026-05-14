@@ -16,9 +16,9 @@ const CONFIG: Record<ZoneLabel, {
   risk: string; actionLabel: string;
 }> = {
   MERAH: {
-    bg:      "var(--deep)",
-    fg:      "var(--cream)",
-    pillBg:  "color-mix(in srgb, var(--cream) 14%, transparent)",
+    bg:      "#F87171",
+    fg:      "#2B0F0F",
+    pillBg:  "rgba(127, 29, 29, 0.12)",
     label:   "Zona Merah",
     sublabel: "Jalur Hijau / RTH — Kawasan Lindung",
     desc:    "Usaha komersial dilarang keras. Risiko penertiban Satpol PP dan pembongkaran paksa tanpa ganti rugi.",
@@ -27,9 +27,9 @@ const CONFIG: Record<ZoneLabel, {
     actionLabel: "Lihat Opsi & Banding",
   },
   KUNING: {
-    bg:      "var(--bright)",
-    fg:      "var(--deep)",
-    pillBg:  "color-mix(in srgb, var(--deep) 14%, transparent)",
+    bg:      "#FACC15",
+    fg:      "#2F2600",
+    pillBg:  "rgba(113, 63, 18, 0.14)",
     label:   "Zona Kuning",
     sublabel: "Kawasan Campuran — Izin Bersyarat",
     desc:    "Usaha komersial diperbolehkan dengan perizinan lengkap. Wajib memiliki NIB, IMB/PBG, dan SIUP sesuai peruntukan.",
@@ -38,9 +38,9 @@ const CONFIG: Record<ZoneLabel, {
     actionLabel: "Lihat Checklist Izin",
   },
   HIJAU: {
-    bg:      "var(--deep)",
-    fg:      "var(--cream)",
-    pillBg:  "color-mix(in srgb, var(--cream) 14%, transparent)",
+    bg:      "#86EFAC",
+    fg:      "#12351F",
+    pillBg:  "rgba(22, 101, 52, 0.14)",
     label:   "Zona Hijau",
     sublabel: "Kawasan Komersial — Sesuai RDTR",
     desc:    "Lokasi sesuai peruntukan perdagangan dan jasa. Tetap lengkapi NIB, IMB/PBG, dan SIUP sebelum operasional.",

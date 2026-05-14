@@ -23,16 +23,16 @@ const ZONE_CONFIG: Record<ZoneLabel, {
   actionLabel: string;
 }> = {
   MERAH: {
-    bg:         "var(--deep)",
-    fg:         "var(--cream)",
-    accentBg:   "color-mix(in srgb, var(--bright) 14%, transparent)",
+    bg:         "#F87171",
+    fg:         "#2B0F0F",
+    accentBg:   "rgba(127, 29, 29, 0.12)",
     riskBadge:  "DILARANG",
-    riskBg:     "var(--bright)",
+    riskBg:     "#7F1D1D",
     Icon:       AlertTriangle,
     title:      "Zona Merah",
-    subtitle:   "Jalur Hijau / Ruang Terbuka Hijau — Kawasan Lindung",
+    subtitle:   "Jalur Hijau / Ruang Terbuka Hijau · Kawasan Lindung",
     headline:   "Usaha komersial dilarang di lokasi ini.",
-    regulation: "Perda DKI No. 8/2007 · Pasal 38 — Kawasan Lindung & RTH",
+    regulation: "Perda DKI No. 8/2007 · Pasal 38 · Kawasan Lindung & RTH",
     regulationUrl: "https://peraturan.bpk.go.id/Details/35432/perda-prov-dki-jakarta-no-8-tahun-2007",
     keyMessage: "Kawasan ini ditetapkan sebagai Ruang Terbuka Hijau (RTH) yang dilindungi. Tidak ada mekanisme perizinan yang dapat mengizinkan kegiatan usaha komersial di zona ini. Beroperasi di sini berisiko penertiban oleh Satpol PP dan pembongkaran paksa tanpa ganti rugi.",
     permits:    [],
@@ -44,19 +44,19 @@ const ZONE_CONFIG: Record<ZoneLabel, {
     actionLabel: "Lihat Opsi & Proses Banding",
   },
   KUNING: {
-    bg:         "var(--bright)",
-    fg:         "var(--deep)",
-    accentBg:   "color-mix(in srgb, var(--deep) 10%, transparent)",
+    bg:         "#FACC15",
+    fg:         "#2F2600",
+    accentBg:   "rgba(113, 63, 18, 0.14)",
     riskBadge:  "BERSYARAT",
-    riskBg:     "var(--deep)",
+    riskBg:     "#713F12",
     Icon:       AlertCircle,
     title:      "Zona Kuning",
-    subtitle:   "Kawasan Penggunaan Campuran — Izin Komersial Bersyarat",
+    subtitle:   "Kawasan Penggunaan Campuran · Izin Komersial Bersyarat",
     headline:   "Usaha diizinkan dengan perizinan lengkap.",
-    regulation: "Perda DKI No. 8/2007 · Peruntukan W4/K5 — Kawasan Campuran",
+    regulation: "Perda DKI No. 8/2007 · Peruntukan W4/K5 · Kawasan Campuran",
     regulationUrl: "https://peraturan.bpk.go.id/Details/35432/perda-prov-dki-jakarta-no-8-tahun-2007",
     keyMessage: "Lokasi ini berada di kawasan campuran yang mengizinkan kegiatan komersial dengan syarat perizinan terpenuhi. Pastikan NIB, IMB/PBG, dan SIUP aktif sebelum membuka usaha. Izin dapat dicabut jika penggunaan tidak sesuai rencana tapak.",
-    permits:    ["NIB via OSS (oss.go.id)", "IMB / PBG — Dinas PKPUKP DKI", "SIUP sesuai KBLI bidang usaha", "SPPL (Surat Pernyataan Lingkungan)"],
+    permits:    ["NIB via OSS (oss.go.id)", "IMB / PBG · Dinas PKPUKP DKI", "SIUP sesuai KBLI bidang usaha", "SPPL (Surat Pernyataan Lingkungan)"],
     links: [
       { label: "Sistem OSS (NIB)", url: "https://oss.go.id", note: "Daftar NIB dan izin usaha secara online" },
       { label: "Portal RDTR Jakarta", url: "https://jakartasatu.jakarta.go.id", note: "Verifikasi peruntukan zona secara mandiri" },
@@ -65,19 +65,19 @@ const ZONE_CONFIG: Record<ZoneLabel, {
     actionLabel: "Lihat Checklist Izin Lengkap",
   },
   HIJAU: {
-    bg:         "var(--deep)",
-    fg:         "var(--cream)",
-    accentBg:   "color-mix(in srgb, var(--bright) 14%, transparent)",
+    bg:         "#86EFAC",
+    fg:         "#12351F",
+    accentBg:   "rgba(22, 101, 52, 0.14)",
     riskBadge:  "DIIZINKAN",
-    riskBg:     "var(--bright)",
+    riskBg:     "#166534",
     Icon:       CheckCircle,
     title:      "Zona Hijau",
-    subtitle:   "Kawasan Komersial — Sesuai RDTR untuk Usaha Perdagangan & Jasa",
+    subtitle:   "Kawasan Komersial · Sesuai RDTR untuk Usaha Perdagangan & Jasa",
     headline:   "Lokasi ini sesuai peruntukan komersial.",
-    regulation: "Perda DKI No. 8/2007 · Peruntukan K1/K3 — Perdagangan & Jasa",
+    regulation: "Perda DKI No. 8/2007 · Peruntukan K1/K3 · Perdagangan & Jasa",
     regulationUrl: "https://peraturan.bpk.go.id/Details/35432/perda-prov-dki-jakarta-no-8-tahun-2007",
-    keyMessage: "Kawasan ini ditetapkan untuk kegiatan perdagangan dan jasa berdasarkan RDTR DKI Jakarta. Risiko zonasi sangat rendah. Tetap lengkapi semua perizinan operasional sebelum membuka usaha — kepatuhan izin melindungi usaha Anda dari penutupan.",
-    permits:    ["NIB via OSS (oss.go.id)", "IMB / PBG — Dinas PKPUKP DKI", "SIUP sesuai KBLI bidang usaha"],
+    keyMessage: "Kawasan ini ditetapkan untuk kegiatan perdagangan dan jasa berdasarkan RDTR DKI Jakarta. Risiko zonasi sangat rendah. Tetap lengkapi semua perizinan operasional sebelum membuka usaha. Kepatuhan izin melindungi usaha Anda dari penutupan.",
+    permits:    ["NIB via OSS (oss.go.id)", "IMB / PBG · Dinas PKPUKP DKI", "SIUP sesuai KBLI bidang usaha"],
     links: [
       { label: "Sistem OSS (NIB)", url: "https://oss.go.id", note: "Daftar NIB dan izin usaha secara online" },
       { label: "Portal RDTR Jakarta", url: "https://jakartasatu.jakarta.go.id", note: "Konfirmasi peruntukan zona lokasi Anda" },
@@ -93,11 +93,11 @@ const ZONE_CONFIG: Record<ZoneLabel, {
     riskBg:     "var(--deep)",
     Icon:       HelpCircle,
     title:      "Validasi Zonasi Diperlukan",
-    subtitle:   "Data RDTR Tidak Tersedia — Verifikasi Manual Dibutuhkan",
+    subtitle:   "Data RDTR Tidak Tersedia · Verifikasi Manual Dibutuhkan",
     headline:   "Status zona lokasi ini belum dapat ditentukan.",
     regulation: "RDTR DKI Jakarta · Portal: jakartasatu.jakarta.go.id",
     regulationUrl: "https://jakartasatu.jakarta.go.id",
-    keyMessage: "Data RDTR tidak tersedia untuk titik ini. Jangan buka usaha sebelum status zona dikonfirmasi — beroperasi di zona yang belum terverifikasi berisiko penertiban walaupun terlihat legal. Verifikasi ke portal RDTR Jakarta atau konsultasi langsung ke Dinas CKTRP DKI Jakarta.",
+    keyMessage: "Data RDTR tidak tersedia untuk titik ini. Jangan buka usaha sebelum status zona dikonfirmasi. Beroperasi di zona yang belum terverifikasi berisiko penertiban walaupun terlihat legal. Verifikasi ke portal RDTR Jakarta atau konsultasi langsung ke Dinas CKTRP DKI Jakarta.",
     permits:    ["Verifikasi status zona ke portal RDTR", "Konsultasi ke Dinas CKTRP DKI Jakarta", "Siapkan NIB via OSS secara paralel"],
     links: [
       { label: "Portal RDTR Jakarta", url: "https://jakartasatu.jakarta.go.id", note: "Masukkan koordinat untuk cek peruntukan" },
@@ -147,7 +147,7 @@ export default function ZoneHeroSection({ zone }: ZoneHeroSectionProps) {
             </span>
             <span style={{
               background: cfg.riskBg,
-              color: cfg.riskBg === "var(--bright)" ? "var(--deep)" : "var(--bright)",
+              color: "var(--cream)",
               borderRadius: 999, padding: "0.35rem 0.9rem",
               ...monoStyle, fontSize: "0.65rem",
             }}>
@@ -184,7 +184,7 @@ export default function ZoneHeroSection({ zone }: ZoneHeroSectionProps) {
           {/* Left column */}
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: "0.8rem", marginBottom: "0.8rem" }}>
-              <Icon size={28} style={{ color: cfg.riskBg === "var(--bright)" ? "var(--bright)" : "var(--deep)", flexShrink: 0 }} />
+              <Icon size={28} style={{ color: cfg.riskBg, flexShrink: 0 }} />
               <div>
                 <h2 style={{
                   fontFamily: "'Inter', system-ui, sans-serif",
@@ -257,7 +257,7 @@ export default function ZoneHeroSection({ zone }: ZoneHeroSectionProps) {
                     <div key={i} style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
                       <div style={{
                         width: 6, height: 6, borderRadius: 999, flexShrink: 0,
-                        background: cfg.riskBg === "var(--bright)" ? "var(--bright)" : "var(--deep)",
+                        background: cfg.riskBg,
                       }} />
                       <span style={{
                         fontFamily: "'Inter', system-ui, sans-serif",
@@ -320,8 +320,8 @@ export default function ZoneHeroSection({ zone }: ZoneHeroSectionProps) {
             <button
               onClick={() => setModalOpen(true)}
               style={{
-                background: cfg.fg,
-                color: cfg.bg,
+                background: cfg.riskBg,
+                color: "var(--cream)",
                 border: "none", cursor: "pointer",
                 borderRadius: 999, padding: "12px 22px",
                 fontFamily: "'Inter', system-ui, sans-serif",
