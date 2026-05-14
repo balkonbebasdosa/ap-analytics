@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useWizard } from "@/contexts/WizardContext";
 import { useAuth } from "@/contexts/AuthContext";
-import { businessApi, analyzeApi } from "@/lib/api";
+import { businessApi, analyzeApi, menuImportApi } from "@/lib/api";
 import { STRATEGIC_GOALS } from "@/types";
 import type { Product } from "@/types";
 import { formatPrice, formatDistance } from "@/lib/utils";
@@ -25,6 +25,8 @@ import {
   Utensils,
   Wrench,
   MapPin,
+  Upload,
+  Loader2,
 } from "lucide-react";
 import MapPicker from "@/components/MapPicker";
 import { HexButton } from "@/components/ui/HexButton";
@@ -307,16 +309,24 @@ function CategoryPicker({ value, onChange }: { value: string; onChange: (val: st
   );
 }
 
+// Local row carries a transient confidence flag from file import; it's stripped
+// before the data is saved to the wizard. The flag clears once the user edits
+// the row (i.e. they've reviewed it).
+type ProductRow = Product & { confidence?: "high" | "low" };
+
 function PanelOne() {
   const { data, updateData, setStep } = useWizard();
   const [name, setName] = useState(data.name);
   const [category, setCategory] = useState(data.category);
   const [concept, setConcept] = useState(data.concept);
-  const [products, setProducts] = useState<Product[]>(
+  const [products, setProducts] = useState<ProductRow[]>(
     data.products.length > 0 ? data.products : [{ name: "", price: 0 }]
   );
   const [goals, setGoals] = useState<string[]>(data.goals);
   const [error, setError] = useState("");
+  const [importing, setImporting] = useState(false);
+  const [warnings, setWarnings] = useState<string[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const addProduct = () => setProducts([...products, { name: "", price: 0 }]);
   const removeProduct = (i: number) => {
@@ -324,13 +334,57 @@ function PanelOne() {
     setProducts(products.filter((_, idx) => idx !== i));
   };
   const updateProduct = (i: number, field: keyof Product, value: string | number) => {
-    setProducts(products.map((p, idx) => (idx === i ? { ...p, [field]: value } : p)));
+    setProducts(
+      products.map((p, idx) =>
+        idx === i ? { ...p, [field]: value, confidence: undefined } : p
+      )
+    );
   };
+
+  const handleImportClick = () => fileInputRef.current?.click();
+  const handleFileSelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = ""; // allow re-selecting the same file
+    if (!file) return;
+
+    setImporting(true);
+    setError("");
+    setWarnings([]);
+    try {
+      const { data: result } = await menuImportApi.upload(file);
+      const imported: ProductRow[] = result.items.map((item) => ({
+        name: item.name,
+        price: item.price,
+        confidence: item.confidence,
+      }));
+
+      if (imported.length === 0) {
+        setError("Tidak ada item menu yang ditemukan di file tersebut.");
+        setWarnings(result.warnings);
+        return;
+      }
+
+      // Replace the rows if the form is still untouched, otherwise append.
+      const formIsEmpty = products.every((p) => !p.name.trim() && !p.price);
+      setProducts(formIsEmpty ? imported : [...products, ...imported]);
+      setWarnings(result.warnings);
+    } catch (err) {
+      const message =
+        (err as { response?: { data?: { error?: string } } }).response?.data?.error ??
+        "Gagal mengimpor file. Coba lagi atau masukkan produk secara manual.";
+      setError(message);
+    } finally {
+      setImporting(false);
+    }
+  };
+
   const handleContinue = () => {
     if (!name.trim()) return setError("Nama bisnis wajib diisi.");
     if (!category) return setError("Pilih kategori.");
     if (!concept.trim()) return setError("Deskripsikan konsep Anda.");
-    const validProducts = products.filter((p) => p.name.trim() && p.price > 0);
+    const validProducts = products
+      .filter((p) => p.name.trim() && p.price > 0)
+      .map(({ name, price }) => ({ name, price }));
     if (validProducts.length === 0) return setError("Tambahkan setidaknya satu produk dengan nama dan harga.");
     if (goals.length === 0) return setError("Pilih setidaknya satu tujuan strategis.");
 
@@ -390,6 +444,58 @@ function PanelOne() {
         title="Apa yang Anda jual."
         description="Menu, katalog, atau daftar layanan dengan harga dalam IDR. Tambahkan sebanyak yang diperlukan."
       >
+        {/* Import menu from file */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".csv,.xlsx,.xls,.pdf"
+          onChange={handleFileSelected}
+          style={{ display: "none" }}
+        />
+        <button
+          type="button"
+          onClick={handleImportClick}
+          disabled={importing}
+          style={{
+            width: "100%",
+            display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8,
+            background: "var(--soft)", border: "1px dashed var(--deep)",
+            borderRadius: 12, padding: "12px 20px",
+            cursor: importing ? "default" : "pointer",
+            fontFamily: "'Inter', system-ui, sans-serif",
+            fontSize: 12, fontWeight: 600, letterSpacing: "0.02em",
+            color: "var(--deep)", opacity: importing ? 0.6 : 1,
+            marginBottom: "0.5rem",
+            transition: "background 200ms",
+          }}
+          onMouseEnter={(e) => { if (!importing) e.currentTarget.style.background = "var(--bright)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = "var(--soft)"; }}
+        >
+          {importing
+            ? <><Loader2 size={14} className="animate-spin" /> Memproses file…</>
+            : <><Upload size={14} /> Impor menu dari file (CSV, Excel, atau PDF)</>}
+        </button>
+        <p style={{
+          fontFamily: "'Inter', system-ui, sans-serif",
+          fontSize: 11, color: "var(--deep)", opacity: 0.55,
+          margin: "0 0 0.9rem", lineHeight: 1.5,
+        }}>
+          Kami akan membaca nama dan harga dari file. Periksa kembali hasilnya — baris yang ditandai
+          perlu dikonfirmasi.
+        </p>
+
+        {warnings.length > 0 && (
+          <div style={{
+            background: "#FEF3C7", borderRadius: 10,
+            padding: "0.6rem 0.9rem", marginBottom: "0.9rem",
+            fontFamily: "'Inter', system-ui, sans-serif",
+            fontSize: 12, color: "#92400E", lineHeight: 1.5,
+            display: "flex", flexDirection: "column", gap: 4,
+          }}>
+            {warnings.map((w, i) => <span key={i}>{w}</span>)}
+          </div>
+        )}
+
         <div className="compartment-inner" style={{ padding: "0.6rem" }}>
           
           <div
@@ -427,6 +533,10 @@ function PanelOne() {
                   padding: "0.55rem 1rem",
                   gap: "0.6rem",
                   background: i % 2 === 1 ? "var(--soft)" : "transparent",
+                  border: product.confidence === "low"
+                    ? "1.5px solid #F59E0B"
+                    : "1.5px solid transparent",
+                  borderRadius: 8,
                 }}
               >
                 <input

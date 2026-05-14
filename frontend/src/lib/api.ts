@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { User, BusinessProfile, WizardData } from "@/types";
+import type { User, BusinessProfile, WizardData, MenuImportResult } from "@/types";
 
 const rawUrl = import.meta.env.VITE_API_URL ?? "";
 const base = rawUrl
@@ -46,6 +46,22 @@ export const businessApi = {
 
 export const analyzeApi = {
   run: (profileId: string) => api.post<{ profile: BusinessProfile }>(`/analyze/${profileId}`),
+};
+
+export const menuImportApi = {
+  upload: (file: File) => {
+    const form = new FormData();
+    form.append("file", file);
+    // Drop the JSON default Content-Type so the browser sets the multipart
+    // boundary itself. Deleting the header is more reliable than setting it
+    // to undefined (which axios can serialize as the literal string).
+    return api.post<MenuImportResult>("/menu-import", form, {
+      transformRequest: (data, headers) => {
+        delete headers["Content-Type"];
+        return data;
+      },
+    });
+  },
 };
 
 export default api;

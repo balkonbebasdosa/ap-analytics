@@ -10,6 +10,18 @@ export interface Product {
   price: number;
 }
 
+export interface ImportedMenuItem {
+  name: string;
+  price: number;
+  confidence: "high" | "low";
+}
+
+export interface MenuImportResult {
+  items: ImportedMenuItem[];
+  warnings: string[];
+  source: "csv" | "excel" | "pdf-text" | "pdf-scanned";
+}
+
 export interface BusinessProfile {
   id: string;
   userId: string;
