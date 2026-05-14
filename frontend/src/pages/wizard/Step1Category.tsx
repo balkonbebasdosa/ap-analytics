@@ -87,7 +87,7 @@ export default function Step1Category() {
           Describe your business concept
         </label>
         <p className="mb-3 text-sm text-muted-foreground">
-          Describe your business in 2–3 sentences — be as clear as you can.
+          Describe your business in 2–3 sentences. Be as clear as you can.
         </p>
         <textarea
           placeholder='e.g. "A specialty coffee shop focusing on single-origin Indonesian beans with a cozy co-working atmosphere..."'

@@ -49,7 +49,7 @@ export default function Step2Products() {
             <div className="flex flex-1 items-center gap-2 rounded-2xl border border-card-border bg-white px-4 py-3 shadow-sm focus-within:border-foreground focus-within:ring-1 focus-within:ring-foreground transition-all">
               <input
                 type="text"
-                placeholder={`Product ${i + 1} name — e.g. Signature Latte`}
+                placeholder={`Product ${i + 1} name, e.g. Signature Latte`}
                 value={product.name}
                 onChange={(e) => updateProduct(i, "name", e.target.value)}
                 className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground/50"

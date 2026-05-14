@@ -10,7 +10,7 @@ export default function ErrorPage({ error }: { error?: Error | null }) {
       code="500"
       eyebrow="Error · Something broke"
       title="Something went wrong."
-      description="An unexpected error interrupted the page. Reloading usually fixes it — if it keeps happening, head back home."
+      description="An unexpected error interrupted the page. Reloading usually fixes it. If it keeps happening, head back home."
       actions={
         <>
           <HexButton variant="solid" onClick={() => window.location.reload()}>

@@ -276,7 +276,7 @@ function PanelOne() {
               >
                 <input
                   type="text"
-                  placeholder={`Item ${i + 1} — e.g. Signature Latte`}
+                  placeholder={`Item ${i + 1}, e.g. Signature Latte`}
                   value={product.name}
                   onChange={(e) => updateProduct(i, "name", e.target.value)}
                   style={{
@@ -421,7 +421,7 @@ function PanelOne() {
           textTransform: "uppercase",
           color: "var(--bright)", opacity: 0.85,
         }}>
-          Panel 01 — fill all required fields to continue.
+          Panel 01. Fill all required fields to continue.
         </span>
         <HexButton onClick={handleContinue}>
           Continue to location <ArrowRight size={14} />
@@ -479,7 +479,7 @@ function PanelTwo() {
         panel={2}
         eyebrow="Location · Radius · Submit"
         title="Where will it sit, and how far do we look?"
-        subtitle="Drop a pin where you intend to open. Then dial in the radius — that's the zone we scan for competitors, demand, and zoning constraints."
+        subtitle="Drop a pin where you intend to open. Then dial in the radius. That's the zone we scan for competitors, demand, and zoning constraints."
       />
 
       {/* ── Map ────────────────────────────────────────────────────────── */}

@@ -524,7 +524,7 @@ export default function DashboardPage() {
           anchor="D · ROADMAP"
           count="04 / 04"
           title="What to do about it."
-          description="Three pillars for differentiation, pricing, and visibility — concrete next moves for this location."
+          description="Three pillars for differentiation, pricing, and visibility: concrete next moves for this location."
         >
           <RoadmapCard roadmap={result.strategicRoadmap} />
         </Section>

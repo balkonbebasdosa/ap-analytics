@@ -14,7 +14,7 @@ const tiers = [
     name: "Free",
     price: "Rp 0",
     period: "to start",
-    blurb: "Everything you need to validate your first locations — no card required.",
+    blurb: "Everything you need to validate your first locations. No card required.",
     features: [
       "3 location analyses",
       "BVI viability score & breakdown",
@@ -31,7 +31,7 @@ const tiers = [
     name: "Pro",
     price: "Rp 25.000",
     period: "month",
-    blurb: "For founders comparing many sites — analyze as much as you need.",
+    blurb: "For founders comparing many sites. Analyze as much as you need.",
     features: [
       "Unlimited location analyses",
       "Everything in Free",
@@ -239,7 +239,7 @@ export default function PricingPage() {
               color: "color-mix(in srgb, var(--deep) 75%, transparent)",
             }}
           >
-            Two plans, one goal — making location decisions on data, not vibes.
+            Two plans, one goal: making location decisions on data, not vibes.
             No hidden fees, cancel anytime.
           </p>
         </section>
@@ -269,7 +269,7 @@ export default function PricingPage() {
               color: "color-mix(in srgb, var(--deep) 60%, transparent)",
             }}
           >
-            Prices in Indonesian Rupiah. Pro billing is monthly — cancel any time.
+            Prices in Indonesian Rupiah. Pro billing is monthly, cancel any time.
           </p>
         </section>
 

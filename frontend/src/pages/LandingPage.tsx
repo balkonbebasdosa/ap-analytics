@@ -21,8 +21,8 @@ const stats = [
 const steps = [
   { num: "01", title: "Describe your business",   desc: "Category, concept, and key offerings. We capture the shape of what you sell." },
   { num: "02", title: "Drop your pin",            desc: "Mark your intended location on the map. We scan everything around it." },
-  { num: "03", title: "Set your impact radius",   desc: "Anywhere from 0.5 km to 10 km — the competitive zone you care about." },
-  { num: "04", title: "Read your dashboard",      desc: "BVI score, competitor map, SWOT, and a strategic roadmap — instantly." },
+  { num: "03", title: "Set your impact radius",   desc: "Anywhere from 0.5 km to 10 km. The competitive zone you care about." },
+  { num: "04", title: "Read your dashboard",      desc: "BVI score, competitor map, SWOT, and a strategic roadmap, generated instantly." },
 ];
 
 const features = [
@@ -30,7 +30,7 @@ const features = [
   { num: "02", title: "Identify your gap",        desc: "Analyzes competitors and generates a SWOT tailored to your business." },
   { num: "03", title: "BVI score",              desc: "A predictive viability score based on competition density and location signals." },
   { num: "04", title: "Strategic roadmap",      desc: "Actionable moves on differentiation, pricing, and where to spend on marketing." },
-  { num: "05", title: "Data-driven decisions",  desc: "Real-time Google Places data — accurate competitor intelligence, no guesswork." },
+  { num: "05", title: "Data-driven decisions",  desc: "Real-time Google Places data. Accurate competitor intelligence, no guesswork." },
   { num: "06", title: "Visual analytics",       desc: "Charts and dashboards that communicate the insight at a glance." },
 ];
 
@@ -86,7 +86,7 @@ function FloatingScorePreview() {
             fontSize: 12, lineHeight: 1.3, fontWeight: 500,
             color: "var(--deep)",
           }}>
-            Moderately viable — differentiation will be key.
+            Moderately viable. Differentiation will be key.
           </div>
         </div>
       </div>
@@ -325,7 +325,7 @@ export default function LandingPage() {
               }}
             >
               AP Analytics evaluates your business location using real competitor
-              data and AI-generated strategic insights — free to start.
+              data and AI-generated strategic insights, free to start.
             </p>
 
             <div

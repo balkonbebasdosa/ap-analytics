@@ -89,7 +89,7 @@ export default function AuthPage() {
             fontWeight: 300, fontSize: "1.15rem", lineHeight: 1.45,
             color: "color-mix(in srgb, var(--cream) 78%, transparent)",
           }}>
-            Lihat ke mana bisnis Anda benar-benar pergi — dan apa yang bisa Anda lakukan.
+            Lihat ke mana bisnis Anda benar-benar pergi, dan apa yang bisa Anda lakukan.
           </p>
         </div>
 
