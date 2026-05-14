@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useLayoutEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
@@ -15,7 +15,7 @@ import { stepPreviews } from "@/components/landing/StepPreviews";
 const stats = [
   { value: "0.5–10km", label: "Radius scan" },
   { value: "Real-time",label: "Places data" },
-  { value: "0 IDR",    label: "Forever" },
+  { value: "Rp 0",     label: "To start" },
 ];
 
 const steps = [
@@ -103,7 +103,7 @@ function FloatingSticker() {
       className="animate-float-sticky pointer-events-none absolute right-8 top-24 z-10 hidden lg:block xl:right-24"
     >
       <span className="pill-mono" style={{ background: "var(--deep)", color: "var(--bright)" }}>
-        gratis selamanya ✦
+        mulai gratis ✦
       </span>
     </motion.div>
   );
@@ -142,6 +142,7 @@ function LandingNav() {
           <div className="landing-nav-actions" style={{ display: "flex", alignItems: "center", gap: "1.4rem" }}>
             <a href="#how"      className="mono-nav hover:opacity-60 nav-anchor">How</a>
             <a href="#features" className="mono-nav hover:opacity-60 nav-anchor">Features</a>
+            <Link to="/pricing" className="mono-nav hover:opacity-60 nav-anchor">Pricing</Link>
             <a href="#start"    className="mono-nav hover:opacity-60 nav-anchor">Start</a>
             <Link to="/auth" className="mono-nav nav-anchor" style={{ opacity: 0.7 }}>Log in</Link>
             <HexButton as="a" href="/auth?mode=register" variant="solid">
@@ -166,8 +167,6 @@ function StepCard({
 }) {
   const [hovered, setHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [textWidth, setTextWidth] = useState<number | null>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
   const Demo = stepPreviews[index];
 
   useEffect(() => {
@@ -178,34 +177,16 @@ function StepCard({
     return () => mq.removeEventListener("change", update);
   }, []);
 
-  /* Freeze the text column at the collapsed card width so it never reflows —
-     when a card shrinks, the card edge clips the text instead of resizing it. */
-  useLayoutEffect(() => {
-    if (isMobile) { setTextWidth(null); return; }
-    const measure = () => {
-      const el = cardRef.current;
-      if (!el || hovered) return;
-      const cs = getComputedStyle(el);
-      const pad = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
-      setTextWidth(el.clientWidth - pad);
-    };
-    measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, [isMobile, hovered]);
-
   /* On touch/mobile there's no hover — the demo is always shown, stacked below. */
   const expanded = isMobile || hovered;
 
+  /* Text column flexes with the card — text reflows as the card resizes. */
   const textColStyle: React.CSSProperties = isMobile
     ? { flex: "0 0 auto", width: "100%" }
-    : textWidth != null
-      ? { flex: "0 0 auto", width: textWidth }
-      : { flex: "1 1 0%", minWidth: 0 };
+    : { flex: "1 1 0%", minWidth: 0 };
 
   return (
     <motion.div
-      ref={cardRef}
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -344,7 +325,7 @@ export default function LandingPage() {
               }}
             >
               AP Analytics evaluates your business location using real competitor
-              data and AI-generated strategic insights — completely free.
+              data and AI-generated strategic insights — free to start.
             </p>
 
             <div
@@ -596,7 +577,7 @@ export default function LandingPage() {
                 color: "color-mix(in srgb, var(--deep) 78%, transparent)",
               }}
             >
-              Free. No credit card. Instant report. Join the UMKM founders
+              Free to start. No credit card. Instant report. Join the UMKM founders
               who make location decisions on data, not vibes.
             </p>
             <div
@@ -636,6 +617,7 @@ export default function LandingPage() {
           <div style={{ display: "flex", gap: "1.4rem" }}>
             <a href="#how"      className="mono-nav hover:opacity-60">How</a>
             <a href="#features" className="mono-nav hover:opacity-60">Features</a>
+            <Link to="/pricing" className="mono-nav hover:opacity-60">Pricing</Link>
             <a href="#start"    className="mono-nav hover:opacity-60">Start</a>
           </div>
         </footer>
