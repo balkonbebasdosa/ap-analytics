@@ -96,24 +96,25 @@ export interface WizardData {
   latitude: number | null;
   longitude: number | null;
   radiusMeters: number;
+  address?: string;
 }
 
 export const BUSINESS_CATEGORIES = [
-  "Food & Beverage",
-  "Retail",
-  "Beauty",
-  "Health",
-  "Education",
-  "Entertainment",
-  "Services",
-  "Technology",
+  "Makanan & Minuman",
+  "Ritel",
+  "Kecantikan",
+  "Kesehatan",
+  "Pendidikan",
+  "Hiburan",
+  "Jasa",
+  "Teknologi",
 ] as const;
 
 export const STRATEGIC_GOALS = [
-  { id: "quality", label: "Quality & Value-driven", description: "Focus on premium quality and customer value" },
-  { id: "volume", label: "Volume-driven", description: "Maximize customer volume and turnover" },
-  { id: "niche", label: "Niche Market", description: "Target a specific customer segment" },
-  { id: "community", label: "Community-focused", description: "Build loyal local community base" },
-  { id: "digital", label: "Digital-first", description: "Leverage online channels and delivery" },
-  { id: "affordable", label: "Affordability Leader", description: "Compete on price and accessibility" },
+  { id: "quality",    label: "Kualitas & Nilai Terbaik",  description: "Fokus pada kualitas premium dan nilai terbaik bagi pelanggan" },
+  { id: "volume",     label: "Berbasis Volume",           description: "Maksimalkan jumlah pelanggan dan perputaran" },
+  { id: "niche",      label: "Pasar Niche",               description: "Sasar segmen pelanggan yang sangat spesifik" },
+  { id: "community",  label: "Berbasis Komunitas",        description: "Bangun basis komunitas lokal yang loyal" },
+  { id: "digital",    label: "Digital-first",             description: "Manfaatkan kanal online dan layanan pesan antar" },
+  { id: "affordable", label: "Pemimpin Harga Terjangkau", description: "Bersaing di harga dan aksesibilitas" },
 ] as const;

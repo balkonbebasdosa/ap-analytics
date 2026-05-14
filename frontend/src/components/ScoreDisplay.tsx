@@ -10,23 +10,23 @@ interface ScoreDisplayProps {
 const METRICS: { key: keyof ScoreBreakdown; label: string; desc: string }[] = [
   {
     key:   "marketDemand",
-    label: "Market demand",
-    desc:  "Population density, foot traffic, and purchase behaviour within your radius.",
+    label: "Permintaan pasar",
+    desc:  "Kepadatan populasi, lalu lintas pejalan kaki, dan perilaku pembelian dalam radius Anda.",
   },
   {
     key:   "locationAppeal",
-    label: "Location appeal",
-    desc:  "Street visibility, transit access, pedestrian flow, and adjacent commerce.",
+    label: "Daya tarik lokasi",
+    desc:  "Visibilitas jalan, akses transportasi, arus pejalan kaki, dan perdagangan di sekitar.",
   },
   {
     key:   "conceptUniqueness",
-    label: "Concept uniqueness",
-    desc:  "How differentiated your concept is versus competitors nearby.",
+    label: "Keunikan konsep",
+    desc:  "Seberapa berbeda konsep Anda dibandingkan pesaing di sekitar.",
   },
   {
     key:   "competitionDensity",
-    label: "Competitor density",
-    desc:  "Number, proximity, and ratings of competing businesses in your radius.",
+    label: "Kepadatan pesaing",
+    desc:  "Jumlah, kedekatan, dan penilaian bisnis yang bersaing dalam radius Anda.",
   },
 ];
 
@@ -51,7 +51,7 @@ function ScoreHero({ score }: { score: number }) {
         textTransform: "uppercase",
         color: tier.ink, opacity: 0.7,
       }}>
-        Business Viability Index
+        Indeks Kelayakan Bisnis
       </div>
 
       {/* Massive score */}
@@ -181,7 +181,7 @@ export default function ScoreDisplay({ score, breakdown, summary }: ScoreDisplay
           color: "var(--bright)",
           marginBottom: "1rem",
         }}>
-          Market insight
+          Wawasan pasar
         </div>
         <p style={{
           fontFamily: "'Inter', system-ui, sans-serif",

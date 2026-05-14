@@ -8,7 +8,7 @@ import SwotCard from "@/components/SwotCard";
 import ScoreDisplay from "@/components/ScoreDisplay";
 import RoadmapCard from "@/components/RoadmapCard";
 import CompetitorMap from "@/components/CompetitorMap";
-import ZoneBanner from "@/components/ZoneBanner";
+import ZoneHeroSection from "@/components/ZoneHeroSection";
 import { MapPin, ArrowLeft, Download, Calendar, Star, ArrowRight } from "lucide-react";
 import { formatDistance, formatPrice, getScoreTier } from "@/lib/utils";
 import { PaletteScope } from "@/components/ui/PaletteScope";
@@ -24,10 +24,10 @@ function DashboardHero({
   const tier = getScoreTier(result.successScore);
 
   const metrics = [
-    { val: String(competitors.length),                       label: "Competitors" },
-    { val: `${(profile.radiusMeters / 1000).toFixed(1)}km`,  label: "Search radius" },
-    { val: String(result.scoreBreakdown.locationAppeal),     label: "Location appeal" },
-    { val: String(result.scoreBreakdown.marketDemand),       label: "Market demand" },
+    { val: String(competitors.length),                       label: "Pesaing" },
+    { val: `${(profile.radiusMeters / 1000).toFixed(1)}km`,  label: "Radius pencarian" },
+    { val: String(result.scoreBreakdown.locationAppeal),     label: "Daya tarik lokasi" },
+    { val: String(result.scoreBreakdown.marketDemand),       label: "Permintaan pasar" },
   ];
 
   return (
@@ -58,7 +58,7 @@ function DashboardHero({
           }}
         >
           <ArrowLeft size={13} />
-          All analyses
+          Semua analisis
         </Link>
         <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
           {consultNum && (
@@ -70,7 +70,7 @@ function DashboardHero({
               fontSize: 10, fontWeight: 700, letterSpacing: "0.08em",
               textTransform: "uppercase",
             }}>
-              Consult #{consultNum}
+              Konsultasi #{consultNum}
             </span>
           )}
           <button
@@ -93,7 +93,7 @@ function DashboardHero({
               e.currentTarget.style.color = "var(--bright)";
             }}
           >
-            <Download size={12} /> Export
+            <Download size={12} /> Ekspor
           </button>
         </div>
       </div>
@@ -132,7 +132,7 @@ function DashboardHero({
             color: "var(--deep)", opacity: 0.65,
           }}>
             <Calendar size={12} />
-            {new Date(profile.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
+            {new Date(profile.createdAt).toLocaleDateString("id-ID", { year: "numeric", month: "short", day: "numeric" })}
           </span>
         </div>
       </div>
@@ -385,7 +385,7 @@ export default function DashboardPage() {
         setProfile(data.profile);
         setAllProfiles(listData.profiles ?? []);
       })
-      .catch(() => setError("Failed to load analysis results."))
+      .catch(() => setError("Gagal memuat hasil analisis."))
       .finally(() => setIsLoading(false));
   }, [profileId]);
 
@@ -426,10 +426,10 @@ export default function DashboardPage() {
         <main className="container" style={{ paddingTop: "1.5rem" }}>
           <div className="compartment" style={{ textAlign: "center" }}>
             <MonoLabel size="md" tone="ink" style={{ opacity: 0.7 }}>
-              {error || "Analysis not available."}
+              {error || "Analisis tidak tersedia."}
             </MonoLabel>
             <div style={{ marginTop: 24 }}>
-              <HexButton as="a" href="/history" variant="outline">Back to history</HexButton>
+              <HexButton as="a" href="/history" variant="outline">Kembali ke riwayat</HexButton>
             </div>
           </div>
         </main>
@@ -443,8 +443,7 @@ export default function DashboardPage() {
 
   return (
     <PaletteScope palette="green" as="div" className="paper-surface" style={{ minHeight: "100vh" }}>
-      {result.zone && <ZoneBanner zone={result.zone} />}
-      <Navbar consultLabel={consultNum ? `Consult #${consultNum}` : undefined} />
+      <Navbar consultLabel={consultNum ? `Konsultasi #${consultNum}` : undefined} />
 
       <main className="container" style={{
         display: "flex", flexDirection: "column",
@@ -459,12 +458,15 @@ export default function DashboardPage() {
           consultNum={consultNum}
         />
 
+        {/* ── 00 Zone Validation ───────────────────────────────────────── */}
+        {result.zone && <ZoneHeroSection zone={result.zone} />}
+
         {/* ── 01 BVI Score ─────────────────────────────────────────────── */}
         <Section
           anchor="A · BVI SCORE"
           count="01 / 04"
-          title="Business viability index."
-          description="A weighted composite of demand, location, uniqueness, and competition. Strongest metric highlighted in bright green; the rest in deep green."
+          title="Indeks kelayakan bisnis."
+          description="Komposit terbobot dari permintaan, lokasi, keunikan, dan persaingan. Metrik terkuat ditandai dengan hijau terang; sisanya dalam hijau tua."
         >
           <ScoreDisplay
             score={result.successScore}
@@ -477,8 +479,8 @@ export default function DashboardPage() {
         <Section
           anchor="B · SWOT"
           count="02 / 04"
-          title="Strengths, weaknesses, opportunities, threats."
-          description="Four quadrants. Bright tiles = positive signals. Deep tiles = friction and risk."
+          title="Kekuatan, kelemahan, peluang, ancaman."
+          description="Empat kuadran. Tile terang = sinyal positif. Tile gelap = hambatan dan risiko."
         >
           <SwotCard swot={result.swot} />
         </Section>
@@ -486,8 +488,8 @@ export default function DashboardPage() {
         <Section
           anchor="C · COMPETITORS"
           count="03 / 04"
-          title="What's already in the radius."
-          description="Pink dots are competing businesses; the dark dot is your candidate location. Ranked by threat level — same price tier first, then category match, then proximity."
+          title="Apa yang sudah ada di radius."
+          description="Titik pink adalah bisnis pesaing; titik gelap adalah lokasi kandidat Anda. Diurutkan berdasarkan tingkat ancaman — harga setara dulu, lalu kecocokan kategori, lalu jarak."
         >
           <div className="compartment-stack--tight" style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
             <CompetitorMap
@@ -559,7 +561,7 @@ export default function DashboardPage() {
                     borderRadius: 12,
                   }}
                 >
-                  {["#", "Business", "Address", "Price Delta", "Category", "Distance", "Rating"].map((h) => (
+                  {["#", "Bisnis", "Alamat", "Delta Harga", "Kategori", "Jarak", "Rating"].map((h) => (
                     <div
                       key={h}
                       style={{
@@ -609,7 +611,7 @@ export default function DashboardPage() {
                     onMouseEnter={(e) => { e.currentTarget.style.background = "var(--deep)"; e.currentTarget.style.color = "var(--bright)"; }}
                     onMouseLeave={(e) => { e.currentTarget.style.background = "var(--soft)"; e.currentTarget.style.color = "var(--deep)"; }}
                   >
-                    {showAll ? "Show fewer" : `Show all ${competitors.length} competitors`}
+                    {showAll ? "Tampilkan lebih sedikit" : `Tampilkan semua ${competitors.length} pesaing`}
                   </button>
                 )}
               </div>
@@ -617,7 +619,7 @@ export default function DashboardPage() {
 
             {competitors.length === 0 && (
               <div className="compartment-inner" style={{ padding: "3rem 0", textAlign: "center" }}>
-                <MonoLabel tone="ink" style={{ opacity: 0.5 }}>No competitors found in this radius</MonoLabel>
+                <MonoLabel tone="ink" style={{ opacity: 0.5 }}>Tidak ada pesaing ditemukan dalam radius ini</MonoLabel>
               </div>
             )}
           </div>
@@ -627,15 +629,15 @@ export default function DashboardPage() {
         <Section
           anchor="D · ROADMAP"
           count="04 / 04"
-          title="What to do about it."
-          description="Three pillars for differentiation, pricing, and visibility — concrete next moves for this location."
+          title="Apa yang harus dilakukan."
+          description="Tiga pilar untuk diferensiasi, harga, dan visibilitas — langkah konkret berikutnya untuk lokasi ini."
         >
           <RoadmapCard roadmap={result.strategicRoadmap} />
         </Section>
 
         {/* ── 05 Products (conditional) ────────────────────────────────── */}
         {profile.products.length > 0 && (
-          <Section anchor="E · PRODUCTS" count="05 / —" title="Catalog snapshot.">
+          <Section anchor="E · PRODUK" count="05 / —" title="Snapshot katalog.">
             <div className="compartment-inner" style={{ padding: "0.6rem" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
                 {profile.products.map((p, i) => (
@@ -688,9 +690,9 @@ export default function DashboardPage() {
             ap-analysis.
           </span>
           <div style={{ display: "flex", gap: "0.8rem" }}>
-            <HexButton as="a" href="/history" variant="outline">All reports</HexButton>
+            <HexButton as="a" href="/history" variant="outline">Semua laporan</HexButton>
             <HexButton as="a" href="/survey" variant="solid">
-              New analysis <ArrowRight size={14} />
+              Analisis baru <ArrowRight size={14} />
             </HexButton>
           </div>
         </footer>

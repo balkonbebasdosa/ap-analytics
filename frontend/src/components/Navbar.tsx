@@ -64,13 +64,13 @@ export default function Navbar({ consultLabel }: NavbarProps) {
           {user && (
             <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
               <Link to="/survey" style={{ ...linkBase, ...(isDashboard ? activeStyle : inactiveStyle) }}>
-                {consultLabel ?? (isDashboard ? "Consult" : "New consult")}
+                {consultLabel ?? (isDashboard ? "Konsultasi" : "Konsultasi baru")}
               </Link>
               <Link to="/welcome" style={{ ...linkBase, ...(isWelcome ? activeStyle : inactiveStyle) }}>
-                Profile
+                Profil
               </Link>
               <Link to="/history" style={{ ...linkBase, ...(isHistory ? activeStyle : inactiveStyle) }}>
-                History
+                Riwayat
               </Link>
 
               <span style={{
@@ -85,7 +85,7 @@ export default function Navbar({ consultLabel }: NavbarProps) {
 
               <button
                 onClick={handleLogout}
-                aria-label="Log out"
+                aria-label="Keluar"
                 style={{
                   marginLeft: 4, background: "transparent", border: "none",
                   cursor: "pointer", padding: 6, borderRadius: 999,

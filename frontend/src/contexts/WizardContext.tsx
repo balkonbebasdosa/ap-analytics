@@ -18,6 +18,7 @@ const defaultData: WizardData = {
   latitude: null,
   longitude: null,
   radiusMeters: 2000,
+  address: "",
 };
 
 const WizardContext = createContext<WizardContextType | null>(null);

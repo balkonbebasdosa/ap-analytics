@@ -30,7 +30,7 @@ export default function AuthPage() {
     } catch (err: unknown) {
       const data = (err as { response?: { data?: { error?: string; errors?: Array<{ msg: string }> } } })?.response?.data;
       const msg = data?.error ?? data?.errors?.[0]?.msg;
-      setError(msg || "Something went wrong. Please try again.");
+      setError(msg || "Terjadi kesalahan. Silakan coba lagi.");
     } finally {
       setIsLoading(false);
     }
@@ -112,7 +112,7 @@ export default function AuthPage() {
             letterSpacing: "-0.04em", color: "var(--deep)",
           }}>72</div>
           <MonoLabel size="xs" tone="current" style={{ color: "var(--deep)", opacity: 0.65, marginTop: 4, display: "block" }}>
-            Highly viable
+            Sangat layak
           </MonoLabel>
         </div>
       </div>
@@ -133,7 +133,7 @@ export default function AuthPage() {
             color: "var(--deep)", opacity: 0.7,
             textDecoration: "none", marginBottom: "2.6rem",
           }}>
-            <ArrowLeft size={14} /> Back to home
+            <ArrowLeft size={14} /> Kembali ke beranda
           </Link>
 
           <AnimatePresence mode="wait">
@@ -145,24 +145,24 @@ export default function AuthPage() {
               transition={{ duration: 0.25 }}
             >
               <h2 className="display-xl" style={{ marginBottom: "0.6rem" }}>
-                {isRegister ? "Create account." : "Welcome back."}
+                {isRegister ? "Buat akun." : "Selamat datang kembali."}
               </h2>
               <p className="serif-body" style={{
                 color: "color-mix(in srgb, var(--deep) 70%, transparent)",
                 marginBottom: "2rem",
               }}>
                 {isRegister
-                  ? "Start analyzing business locations with AI."
-                  : "Sign in to your AP Analytics account."}
+                  ? "Mulai analisis lokasi bisnis dengan AI."
+                  : "Masuk ke akun AP Analytics Anda."}
               </p>
 
               <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.3rem" }}>
                 {isRegister && (
                   <div>
-                    <InputLabel required>Full name</InputLabel>
+                    <InputLabel required>Nama lengkap</InputLabel>
                     <MonoInput
                       type="text"
-                      placeholder="Your name"
+                      placeholder="Nama Anda"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       required
@@ -182,13 +182,13 @@ export default function AuthPage() {
                 </div>
 
                 <div>
-                  <InputLabel required hint={isRegister ? "Minimum 8 characters." : undefined}>
-                    Password
+                  <InputLabel required hint={isRegister ? "Minimal 8 karakter." : undefined}>
+                    Kata sandi
                   </InputLabel>
                   <div style={{ position: "relative" }}>
                     <MonoInput
                       type={showPassword ? "text" : "password"}
-                      placeholder={isRegister ? "Min. 8 characters" : "Your password"}
+                      placeholder={isRegister ? "Min. 8 karakter" : "Kata sandi Anda"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
@@ -198,7 +198,7 @@ export default function AuthPage() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      aria-label={showPassword ? "Hide password" : "Show password"}
+                      aria-label={showPassword ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}
                       style={{
                         position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)",
                         background: "none", border: "none", cursor: "pointer",
@@ -244,8 +244,8 @@ export default function AuthPage() {
                     onMouseLeave={(e) => { if (!isLoading) e.currentTarget.style.background = "var(--deep)"; }}
                   >
                     {isLoading
-                      ? "Loading…"
-                      : isRegister ? "Create account" : "Sign in"}
+                      ? "Memuat…"
+                      : isRegister ? "Buat akun" : "Masuk"}
                   </button>
                 </div>
               </form>
@@ -257,7 +257,7 @@ export default function AuthPage() {
                 textTransform: "uppercase",
                 color: "var(--deep)", opacity: 0.65,
               }}>
-                {isRegister ? "Already have an account?" : "Don't have an account?"}{" "}
+                {isRegister ? "Sudah punya akun?" : "Belum punya akun?"}{" "}
                 <button
                   onClick={() => { setIsRegister(!isRegister); setError(""); }}
                   style={{
@@ -268,7 +268,7 @@ export default function AuthPage() {
                     textDecoration: "underline",
                   }}
                 >
-                  {isRegister ? "Sign in" : "Sign up"}
+                  {isRegister ? "Masuk" : "Daftar"}
                 </button>
               </p>
             </motion.div>

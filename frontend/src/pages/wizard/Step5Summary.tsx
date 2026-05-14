@@ -43,7 +43,7 @@ export default function Step5Summary() {
       navigate(`/dashboard/${analysisData.profile.id}`);
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
-      setError(msg || "Something went wrong. Please try again.");
+      setError(msg || "Terjadi kesalahan. Silakan coba lagi.");
       setIsSubmitting(false);
     }
   };
@@ -52,44 +52,44 @@ export default function Step5Summary() {
     <div className="space-y-6">
       {/* ── Heading ─────────────────────────────────────────────────────── */}
       <div>
-        <h2 className="text-lg font-bold text-foreground">Review your consult details</h2>
+        <h2 className="text-lg font-bold text-foreground">Tinjau detail konsultasi Anda</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Confirm all parameters before submitting to AI analysis.
+          Konfirmasi semua parameter sebelum dikirim ke analisis AI.
         </p>
       </div>
 
       {/* ── Summary grid ────────────────────────────────────────────────── */}
       <div className="grid gap-4 sm:grid-cols-2">
-        <SummaryBlock icon={Briefcase} label="Business Identity">
-          <Row label="Name">{data.name}</Row>
-          <Row label="Category">
+        <SummaryBlock icon={Briefcase} label="Identitas Bisnis">
+          <Row label="Nama">{data.name}</Row>
+          <Row label="Kategori">
             <span className="rounded-full border border-card-border px-2.5 py-0.5 text-xs">
               {data.category}
             </span>
           </Row>
           <div className="pt-1">
-            <div className="text-xs text-muted-foreground">Concept</div>
+            <div className="text-xs text-muted-foreground">Konsep</div>
             <p className="mt-1 text-xs leading-relaxed text-foreground">{data.concept}</p>
           </div>
         </SummaryBlock>
 
-        <SummaryBlock icon={MapPin} label="Location">
-          <Row label="Latitude">
+        <SummaryBlock icon={MapPin} label="Lokasi">
+          <Row label="Lintang">
             <code className="font-mono text-xs">{data.latitude?.toFixed(6)}</code>
           </Row>
-          <Row label="Longitude">
+          <Row label="Bujur">
             <code className="font-mono text-xs">{data.longitude?.toFixed(6)}</code>
           </Row>
-          <Row label="Scan Radius">{formatDistance(data.radiusMeters)}</Row>
+          <Row label="Radius Scan">{formatDistance(data.radiusMeters)}</Row>
         </SummaryBlock>
 
-        <SummaryBlock icon={ShoppingBag} label={`Products (${data.products.length})`}>
+        <SummaryBlock icon={ShoppingBag} label={`Produk (${data.products.length})`}>
           {data.products.map((p, i) => (
             <Row key={i} label={p.name}>{formatPrice(p.price)}</Row>
           ))}
         </SummaryBlock>
 
-        <SummaryBlock icon={Target} label="Strategic Goals">
+        <SummaryBlock icon={Target} label="Tujuan Strategis">
           <div className="flex flex-wrap gap-1.5 pt-1">
             {data.goals.map((g) => (
               <span
@@ -110,9 +110,9 @@ export default function Step5Summary() {
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-foreground border-t-transparent" />
           </div>
           <p className="font-semibold text-foreground">
-            Scanning competitors &amp; generating AI analysis…
+            Memindai pesaing &amp; menghasilkan analisis AI…
           </p>
-          <p className="mt-1 text-xs text-muted-foreground">This may take 15–30 seconds</p>
+          <p className="mt-1 text-xs text-muted-foreground">Ini mungkin memerlukan 15–30 detik</p>
         </div>
       )}
 
@@ -129,7 +129,7 @@ export default function Step5Summary() {
           disabled={isSubmitting}
           className="flex items-center gap-2 rounded-full border border-card-border px-6 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted disabled:opacity-50"
         >
-          <ArrowLeft className="h-4 w-4" /> Back
+          <ArrowLeft className="h-4 w-4" /> Kembali
         </button>
         <button
           onClick={handleSubmit}
@@ -139,11 +139,11 @@ export default function Step5Summary() {
           {isSubmitting ? (
             <>
               <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-              Analyzing…
+              Menganalisis…
             </>
           ) : (
             <>
-              <Sparkles className="h-4 w-4" /> Run AI Analysis
+              <Sparkles className="h-4 w-4" /> Jalankan Analisis AI
             </>
           )}
         </button>

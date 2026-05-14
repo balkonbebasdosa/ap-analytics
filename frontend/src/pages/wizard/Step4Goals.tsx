@@ -18,7 +18,7 @@ export default function Step4Goals() {
 
   const handleNext = () => {
     if (goals.length === 0) {
-      setError("Please select at least one strategic goal.");
+      setError("Harap pilih setidaknya satu tujuan strategis.");
       return;
     }
     updateData({ goals });
@@ -29,9 +29,9 @@ export default function Step4Goals() {
     <div className="space-y-8">
       {/* ── Heading ─────────────────────────────────────────────────────── */}
       <div>
-        <h2 className="text-lg font-bold text-foreground">What are your strategic goals?</h2>
+        <h2 className="text-lg font-bold text-foreground">Apa tujuan strategis Anda?</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Select your primary objectives — these calibrate how AP Analytics weights your results.
+          Pilih tujuan utama Anda — ini mengkalibrasi cara AP Analytics menilai hasilnya.
         </p>
       </div>
 
@@ -100,13 +100,13 @@ export default function Step4Goals() {
           onClick={() => setStep(3)}
           className="flex items-center gap-2 rounded-full border border-card-border px-6 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
         >
-          <ArrowLeft className="h-4 w-4" /> Back
+          <ArrowLeft className="h-4 w-4" /> Kembali
         </button>
         <button
           onClick={handleNext}
           className="flex items-center gap-2 rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-80"
         >
-          Review Summary <ArrowRight className="h-4 w-4" />
+          Tinjau Ringkasan <ArrowRight className="h-4 w-4" />
         </button>
       </div>
     </div>
