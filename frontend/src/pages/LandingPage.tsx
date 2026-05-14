@@ -4,6 +4,7 @@ import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { HexButton } from "@/components/ui/HexButton";
 import { PaletteScope } from "@/components/ui/PaletteScope";
 import { SectionEyebrow, MonoLabel } from "@/components/ui/MonoLabel";
+import { featurePreviews } from "@/components/landing/FeaturePreviews";
 
 /* ──────────────────────────────────────────────────────────────────────────
    Content
@@ -24,7 +25,7 @@ const steps = [
 
 const features = [
   { num: "01", title: "Location intelligence",  desc: "Drop a pin and instantly scan your competitive landscape within a custom radius." },
-  { num: "02", title: "AI-powered SWOT",        desc: "Gemini analyzes competitors and generates a SWOT tailored to your business." },
+  { num: "02", title: "Identify your gap",        desc: "Analyzes competitors and generates a SWOT tailored to your business." },
   { num: "03", title: "BVI score",              desc: "A predictive viability score based on competition density and location signals." },
   { num: "04", title: "Strategic roadmap",      desc: "Actionable moves on differentiation, pricing, and where to spend on marketing." },
   { num: "05", title: "Data-driven decisions",  desc: "Real-time Google Places data — accurate competitor intelligence, no guesswork." },
@@ -430,39 +431,42 @@ export default function LandingPage() {
             }}
             className="feature-grid"
           >
-            {features.map((f, i) => (
-              <motion.div
-                key={f.num}
-                initial={{ opacity: 0, y: 14 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: (i % 3) * 0.06 }}
-                whileHover={{ y: -2 } as never}
-                className="compartment-inner"
-                style={{
-                  display: "flex", flexDirection: "column",
-                  gap: "0.9rem", minHeight: "15rem",
-                  transition: "transform 0.25s ease",
-                }}
-              >
-                <MonoLabel size="xs" tone="ink" style={{ opacity: 0.55 }}>{f.num}</MonoLabel>
-                <h3
+            {features.map((f, i) => {
+              const Preview = featurePreviews[i];
+              return (
+                <motion.div
+                  key={f.num}
+                  initial={{ opacity: 0, y: 14 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: (i % 3) * 0.06 }}
+                  className="compartment-inner"
                   style={{
-                    fontFamily: "'Inter', system-ui, sans-serif",
-                    fontSize: "1.35rem",
-                    fontWeight: 700,
-                    lineHeight: 1.1,
-                    letterSpacing: "-0.02em",
-                    color: "var(--deep)",
+                    display: "flex", flexDirection: "column",
+                    gap: "0.7rem",
+                    transition: "transform 0.25s ease",
                   }}
                 >
-                  {f.title}
-                </h3>
-                <p className="serif-body" style={{ fontSize: "0.92rem", opacity: 0.78 }}>
-                  {f.desc}
-                </p>
-              </motion.div>
-            ))}
+                  <MonoLabel size="xs" tone="ink" style={{ opacity: 0.55 }}>{f.num}</MonoLabel>
+                  <h3
+                    style={{
+                      fontFamily: "'Inter', system-ui, sans-serif",
+                      fontSize: "1.35rem",
+                      fontWeight: 700,
+                      lineHeight: 1.1,
+                      letterSpacing: "-0.02em",
+                      color: "var(--deep)",
+                    }}
+                  >
+                    {f.title}
+                  </h3>
+                  <p className="serif-body" style={{ fontSize: "0.92rem", opacity: 0.78 }}>
+                    {f.desc}
+                  </p>
+                  {Preview && <Preview />}
+                </motion.div>
+              );
+            })}
           </div>
         </section>
 
