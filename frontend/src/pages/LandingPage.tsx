@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef, useLayoutEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
@@ -139,11 +139,11 @@ function LandingNav() {
             ap-analysis.
           </Link>
 
-          <div style={{ display: "flex", alignItems: "center", gap: "1.4rem" }}>
-            <a href="#how"      className="mono-nav hover:opacity-60">How</a>
-            <a href="#features" className="mono-nav hover:opacity-60">Features</a>
-            <a href="#start"    className="mono-nav hover:opacity-60">Start</a>
-            <Link to="/auth" className="mono-nav" style={{ opacity: 0.7 }}>Log in</Link>
+          <div className="landing-nav-actions" style={{ display: "flex", alignItems: "center", gap: "1.4rem" }}>
+            <a href="#how"      className="mono-nav hover:opacity-60 nav-anchor">How</a>
+            <a href="#features" className="mono-nav hover:opacity-60 nav-anchor">Features</a>
+            <a href="#start"    className="mono-nav hover:opacity-60 nav-anchor">Start</a>
+            <Link to="/auth" className="mono-nav nav-anchor" style={{ opacity: 0.7 }}>Log in</Link>
             <HexButton as="a" href="/auth?mode=register" variant="solid">
               Get started <ArrowRight size={14} />
             </HexButton>
@@ -165,10 +165,47 @@ function StepCard({
   delay: number;
 }) {
   const [hovered, setHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [textWidth, setTextWidth] = useState<number | null>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const Demo = stepPreviews[index];
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 1024px)");
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
+  /* Freeze the text column at the collapsed card width so it never reflows —
+     when a card shrinks, the card edge clips the text instead of resizing it. */
+  useLayoutEffect(() => {
+    if (isMobile) { setTextWidth(null); return; }
+    const measure = () => {
+      const el = cardRef.current;
+      if (!el || hovered) return;
+      const cs = getComputedStyle(el);
+      const pad = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
+      setTextWidth(el.clientWidth - pad);
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [isMobile, hovered]);
+
+  /* On touch/mobile there's no hover — the demo is always shown, stacked below. */
+  const expanded = isMobile || hovered;
+
+  const textColStyle: React.CSSProperties = isMobile
+    ? { flex: "0 0 auto", width: "100%" }
+    : textWidth != null
+      ? { flex: "0 0 auto", width: textWidth }
+      : { flex: "1 1 0%", minWidth: 0 };
 
   return (
     <motion.div
+      ref={cardRef}
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -177,19 +214,20 @@ function StepCard({
       onMouseLeave={() => setHovered(false)}
       className="compartment-inner step-card"
       style={{
-        flex: hovered ? "2.4 1 0%" : "1 1 0%",
-        display: "flex", flexDirection: "row",
-        gap: hovered ? "1.4rem" : "0rem",
-        minHeight: "16rem",
+        flex: isMobile ? "0 0 auto" : hovered ? "2.4 1 0%" : "1 1 0%",
+        display: "flex",
+        flexDirection: isMobile ? "column" : "row",
+        gap: isMobile ? "1.2rem" : hovered ? "1.4rem" : "0rem",
+        minHeight: isMobile ? "auto" : "16rem",
         overflow: "hidden",
-        background: hovered ? "var(--soft)" : "var(--cream)",
+        background: expanded ? "var(--soft)" : "var(--cream)",
         transition:
           "flex 0.4s var(--transition-color-easing), gap 0.4s var(--transition-color-easing), background 0.3s var(--transition-color-easing)",
         cursor: "default",
       }}
     >
-      {/* Text column */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "1rem", flex: "1 1 0%", minWidth: 0 }}>
+      {/* Text column — frozen width on desktop so it clips rather than reflows */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "1rem", ...textColStyle }}>
         <MonoLabel size="xs" tone="ink" style={{ opacity: 0.55 }}>{step.num}</MonoLabel>
         <div
           className="font-display"
@@ -218,30 +256,31 @@ function StepCard({
           {step.desc}
         </p>
 
-        <div style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 6 }}>
+        <div style={{ marginTop: isMobile ? "0.2rem" : "auto", display: "flex", alignItems: "center", gap: 6 }}>
           <span style={{ width: 5, height: 5, borderRadius: 999, background: "var(--bright)", flexShrink: 0 }} />
           <span style={{
             fontFamily: "'Inter', system-ui, sans-serif",
             fontSize: 9, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase",
             color: "var(--deep)", opacity: 0.5,
           }}>
-            {hovered ? "Live preview" : "Hover to preview"}
+            {isMobile ? "Step preview" : hovered ? "Live preview" : "Hover to preview"}
           </span>
         </div>
       </div>
 
-      {/* Demo column — expands to the right on hover */}
+      {/* Demo column — expands to the right on hover (desktop) / stacks below (mobile) */}
       <div
         style={{
-          flex: hovered ? "0 0 240px" : "0 0 0px",
+          flex: isMobile ? "0 0 auto" : hovered ? "0 0 240px" : "0 0 0px",
+          width: isMobile ? "100%" : "auto",
           display: "flex", alignItems: "center",
           overflow: "hidden",
-          opacity: hovered ? 1 : 0,
+          opacity: expanded ? 1 : 0,
           transition: "flex 0.4s var(--transition-color-easing), opacity 0.3s ease",
         }}
       >
-        <div style={{ width: 240 }}>
-          <Demo active={hovered} />
+        <div style={{ width: isMobile ? "100%" : 240 }}>
+          <Demo active={expanded} />
         </div>
       </div>
     </motion.div>
@@ -581,7 +620,7 @@ export default function LandingPage() {
 
         {/* ── Footer ──────────────────────────────────────────────────── */}
         <footer
-          className="compartment-well"
+          className="compartment-well landing-footer"
           style={{
             display: "flex", flexWrap: "wrap",
             alignItems: "center", justifyContent: "space-between",
@@ -609,6 +648,14 @@ export default function LandingPage() {
           .step-card    { flex: 0 0 auto !important; }
           .feature-grid { grid-template-columns: 1fr 1fr !important; }
           .about-grid   { grid-template-columns: 1fr !important; gap: 1.4rem !important; }
+        }
+        @media (max-width: 768px) {
+          .nav-anchor      { display: none !important; }
+          .landing-footer  {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 0.7rem !important;
+          }
         }
         @media (max-width: 640px) {
           .feature-grid { grid-template-columns: 1fr !important; }
