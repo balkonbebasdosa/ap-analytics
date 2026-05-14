@@ -50,13 +50,18 @@ export interface StrategicRoadmap {
 export interface Competitor {
   name: string;
   type: string;
+  allTypes: string[];
   rating: number | null;
   userRatingsTotal: number | null;
+  priceLevel: number | null;
   vicinity: string;
   placeId: string;
   lat: number;
   lng: number;
   distanceMeters: number;
+  priceDelta: number;
+  categoryMatch: boolean;
+  threatScore: number;
 }
 
 export interface ZoneResult {
@@ -76,6 +81,8 @@ export interface AnalysisResult {
   strategicRoadmap: StrategicRoadmap;
   summary: string;
   competitors: Competitor[];
+  topCompetitor: Competitor | null;
+  userPriceTier: number;
   address: string;
   zone?: ZoneResult;
 }

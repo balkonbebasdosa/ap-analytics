@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useWizard } from "@/contexts/WizardContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { businessApi, analyzeApi } from "@/lib/api";
-import { BUSINESS_CATEGORIES, STRATEGIC_GOALS } from "@/types";
+import { STRATEGIC_GOALS } from "@/types";
 import type { Product } from "@/types";
 import { formatPrice, formatDistance } from "@/lib/utils";
 import { ArrowLeft, ArrowRight, LogOut, Plus, Trash2, Sparkles, MapPin } from "lucide-react";
@@ -16,9 +16,6 @@ import {
   MonoInput, MonoTextarea, PillToggle, RangeSlider, InputLabel, Fieldset,
 } from "@/components/ui/wizard-primitives";
 
-/* ──────────────────────────────────────────────────────────────────────────
-   Top header — pill-bar floating on cream, no border
-   ────────────────────────────────────────────────────────────────────── */
 function WizardHeader({ consultNum }: { consultNum: number | null }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -73,9 +70,6 @@ function WizardHeader({ consultNum }: { consultNum: number | null }) {
   );
 }
 
-/* ──────────────────────────────────────────────────────────────────────────
-   Panel hero (heading block at the top of each panel)
-   ────────────────────────────────────────────────────────────────────── */
 function PanelHero({ panel, eyebrow, title, subtitle }: {
   panel: number; eyebrow: string; title: string; subtitle: string;
 }) {
@@ -106,9 +100,6 @@ function PanelHero({ panel, eyebrow, title, subtitle }: {
   );
 }
 
-/* ──────────────────────────────────────────────────────────────────────────
-   Error banner — bright pop on error
-   ────────────────────────────────────────────────────────────────────── */
 function ErrorBanner({ children }: { children: React.ReactNode }) {
   return (
     <div
@@ -126,9 +117,160 @@ function ErrorBanner({ children }: { children: React.ReactNode }) {
   );
 }
 
-/* ──────────────────────────────────────────────────────────────────────────
-   PANEL 1 — Identity + Products + Goals
-   ────────────────────────────────────────────────────────────────────── */
+const CATEGORY_SUBCATEGORIES: Record<string, { label: string; value: string }[]> = {
+  "F&B": [
+    { label: "Cafe / Coffee Shop", value: "cafe" }, 
+    { label: "Restaurant / Dine-in", value: "restaurant" }, 
+    { label: "Takeout / Ghost Kitchen", value: "meal_takeaway" },
+    { label: "Bakery", value: "bakery" }
+  ],
+  "Retail": [
+    { label: "Convenience Store", value: "convenience_store" }, 
+    { label: "Clothing / Apparel", value: "clothing_store" },
+    { label: "Hardware Store", value: "hardware_store" },
+    { label: "Pet Store", value: "pet_store" },
+    { label: "Stationery & Books", value: "book_store" }
+  ],
+  "Services": [
+    { label: "Laundry Services", value: "laundry" }, 
+    { label: "Auto & Motor Repair", value: "car_repair" },
+    { label: "Car / Motor Wash", value: "car_wash" }
+  ],
+  "Health & Beauty": [
+    { label: "Pharmacy", value: "pharmacy" }, 
+    { label: "Clinic", value: "doctor" },
+    { label: "Barbershop / Salon", value: "beauty_salon" }, 
+    { label: "Spa & Massage", value: "spa" }
+  ],
+  "Technology": [
+    { label: "Electronics & Gadgets", value: "electronics_store" }, 
+    { label: "Mobile Phone & Accessories", value: "cell_phone_store" }
+  ],
+  "Fitness, Sports & Leisure": [
+    { label: "Gym / Fitness Center", value: "gym" },
+    { label: "Park / Outdoor Recreation", value: "park" },
+    { label: "Sports Stadium", value: "stadium" }
+  ],
+  "Entertainment & Nightlife": [
+    { label: "Movie Theater", value: "movie_theater" },
+    { label: "Night Club", value: "night_club" },
+    { label: "Tourist Attraction", value: "tourist_attraction" }
+  ],
+  "Automotive & Transportation": [
+    { label: "Gas Station", value: "gas_station" },
+    { label: "Car Dealership", value: "car_dealer" },
+    { label: "Car Rental", value: "car_rental" }
+  ],
+  "Professional Services": [
+    { label: "Legal Services / Lawyer", value: "lawyer" }
+  ]
+};
+
+const PARENT_ICONS: Record<string, string> = {
+  "F&B": "🍽️",
+  "Retail": "🛍️",
+  "Services": "🔧",
+  "Health & Beauty": "💄",
+  "Technology": "💻",
+  "Fitness, Sports & Leisure": "🏋️",
+  "Entertainment & Nightlife": "🎬",
+  "Automotive & Transportation": "🚗",
+  "Professional Services": "💼",
+};
+
+function CategoryPicker({ value, onChange }: { value: string; onChange: (val: string) => void }) {
+  const parents = Object.keys(CATEGORY_SUBCATEGORIES);
+  const activeParentFound = parents.find((p) =>
+    CATEGORY_SUBCATEGORIES[p].some((s) => s.value === value)
+  ) ?? null;
+  const [localParent, setLocalParent] = useState<string | null>(activeParentFound);
+
+  const handleParent = (p: string) => {
+    setLocalParent((prev) => (prev === p ? null : p));
+  };
+
+  const selectedLabel = value
+    ? Object.values(CATEGORY_SUBCATEGORIES)
+        .flat()
+        .find((s) => s.value === value)?.label
+    : null;
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+      {selectedLabel && (
+        <div style={{
+          display: "inline-flex", alignItems: "center", gap: 6,
+          background: "var(--deep)", color: "var(--bright)",
+          borderRadius: 999, padding: "4px 12px",
+          fontFamily: "'Inter', system-ui, sans-serif",
+          fontSize: 11, fontWeight: 700, letterSpacing: "0.08em",
+          alignSelf: "flex-start",
+        }}>
+          ✓ {selectedLabel}
+        </div>
+      )}
+
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
+        {parents.map((p) => {
+          const isActive = localParent === p;
+          return (
+            <button
+              key={p}
+              type="button"
+              onClick={() => handleParent(p)}
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 5,
+                padding: "5px 12px", borderRadius: 999, border: "none",
+                fontFamily: "'Inter', system-ui, sans-serif",
+                fontSize: 12, fontWeight: 600, letterSpacing: "0.04em",
+                cursor: "pointer",
+                background: isActive ? "var(--deep)" : "var(--soft)",
+                color: isActive ? "var(--bright)" : "var(--deep)",
+                transition: "background 150ms, color 150ms",
+              }}
+            >
+              <span>{PARENT_ICONS[p]}</span> {p}
+            </button>
+          );
+        })}
+      </div>
+
+      {localParent && (
+        <div style={{
+          display: "flex", flexWrap: "wrap", gap: "0.4rem",
+          padding: "0.6rem 0.8rem",
+          background: "var(--mist)",
+          borderRadius: 12,
+        }}>
+          {CATEGORY_SUBCATEGORIES[localParent].map((sub) => {
+            const isSelected = value === sub.value;
+            return (
+              <button
+                key={sub.value}
+                type="button"
+                onClick={() => onChange(sub.value)}
+                style={{
+                  padding: "4px 14px", borderRadius: 999, border: "none",
+                  fontFamily: "'Inter', system-ui, sans-serif",
+                  fontSize: 12, fontWeight: 600, letterSpacing: "0.04em",
+                  cursor: "pointer",
+                  background: isSelected ? "var(--bright)" : "var(--cream)",
+                  color: "var(--deep)",
+                  outline: isSelected ? "2px solid var(--deep)" : "none",
+                  outlineOffset: 1,
+                  transition: "background 150ms, outline 150ms",
+                }}
+              >
+                {sub.label}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function PanelOne() {
   const { data, updateData, setStep } = useWizard();
   const [name, setName] = useState(data.name);
@@ -179,14 +321,14 @@ function PanelOne() {
         subtitle="Three blocks to capture. Name, category, and concept set the shape. Products and prices anchor the offer. Goals calibrate how we score it."
       />
 
-      {/* ── Identity ───────────────────────────────────────────────────── */}
+      
       <Fieldset
         anchor="A / IDENTITY"
         title="The business itself."
         description="What you call it, what it does, and which lane it's in."
       >
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.4rem" }} className="identity-grid">
-          {/* Name */}
+          
           <div className="compartment-inner">
             <InputLabel hint="The name you'll use on signage." required>Business name</InputLabel>
             <MonoInput
@@ -198,45 +340,25 @@ function PanelOne() {
             />
           </div>
 
-          {/* Category */}
+          
           <div className="compartment-inner">
             <InputLabel hint="What lane are you in?" required>Category</InputLabel>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
-              {BUSINESS_CATEGORIES.map((cat) => (
-                <PillToggle
-                  key={cat}
-                  active={category === cat}
-                  onClick={() => { setCategory(cat); setError(""); }}
-                >
-                  {cat}
-                </PillToggle>
-              ))}
-            </div>
+            <CategoryPicker
+              value={category}
+              onChange={(val) => { setCategory(val); setError(""); }}
+            />
           </div>
-        </div>
-
-        {/* Concept */}
-        <div className="compartment-inner" style={{ marginTop: "1rem" }}>
-          <InputLabel hint="Two or three sentences. Be specific about what you sell and who it's for." required>
-            Concept
-          </InputLabel>
-          <MonoTextarea
-            placeholder="e.g. A specialty coffee shop focusing on single-origin Indonesian beans, with a co-working atmosphere for remote workers and students."
-            value={concept}
-            onChange={(e) => { setConcept(e.target.value); setError(""); }}
-            rows={4}
-          />
         </div>
       </Fieldset>
 
-      {/* ── Products ───────────────────────────────────────────────────── */}
+      
       <Fieldset
         anchor="B / PRODUCTS"
         title="What you sell."
         description="The actual menu, catalog, or service list with prices in IDR. Add as many lines as you need."
       >
         <div className="compartment-inner" style={{ padding: "0.6rem" }}>
-          {/* Header strip */}
+          
           <div
             className="compartment-header"
             style={{
@@ -259,7 +381,7 @@ function PanelOne() {
             ))}
           </div>
 
-          {/* Striped product rows */}
+          
           <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem" }}>
             {products.map((product, i) => (
               <div
@@ -365,20 +487,33 @@ function PanelOne() {
         </button>
       </Fieldset>
 
-      {/* ── Goals ──────────────────────────────────────────────────────── */}
       <Fieldset
-        anchor="C / GOALS"
+        anchor="C / STRATEGY"
         title="What are you optimizing for?"
-        description="Pick all that apply. These calibrate how we weight your viability score and what kind of roadmap we generate."
+        description="Select your primary strategic focus. This determines how we analyze your viability and generate your deterministic feedback."
       >
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "0.6rem" }} className="goals-grid">
           {STRATEGIC_GOALS.map((goal) => {
-            const selected = goals.includes(goal.id);
+            const GOAL_TO_CONCEPT: Record<string, string> = {
+              "quality": "Premium / High-end",
+              "volume": "Fast Service / Quick turnaround",
+              "niche": "Specialized / Niche",
+              "community": "Eco-friendly / Sustainable",
+              "digital": "Innovative / Tech-driven",
+              "affordable": "Low-cost / Value"
+            };
+            const targetConcept = GOAL_TO_CONCEPT[goal.id];
+            const selected = concept === targetConcept;
+            
             return (
               <button
                 key={goal.id}
                 type="button"
-                onClick={() => { toggleGoal(goal.id); setError(""); }}
+                onClick={() => { 
+                  setConcept(targetConcept); 
+                  setGoals([goal.id]);
+                  setError(""); 
+                }}
                 className={selected ? "compartment-deep" : "compartment-inner"}
                 style={{
                   textAlign: "left", cursor: "pointer",
@@ -636,9 +771,6 @@ function ReviewCard({ data, latitude, longitude, radiusMeters }: {
   );
 }
 
-/* ──────────────────────────────────────────────────────────────────────────
-   Sticky footer — floating pill, no border
-   ────────────────────────────────────────────────────────────────────── */
 function StickyFooter({ children }: { children: React.ReactNode }) {
   return (
     <div style={{
