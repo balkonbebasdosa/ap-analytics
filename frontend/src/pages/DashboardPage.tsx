@@ -8,16 +8,13 @@ import SwotCard from "@/components/SwotCard";
 import ScoreDisplay from "@/components/ScoreDisplay";
 import RoadmapCard from "@/components/RoadmapCard";
 import CompetitorMap from "@/components/CompetitorMap";
-import ZoneBanner from "@/components/ZoneBanner";
+import ZoneHeroSection from "@/components/ZoneHeroSection";
 import { MapPin, ArrowLeft, Download, Calendar, Star, ArrowRight } from "lucide-react";
 import { formatDistance, formatPrice, getScoreTier } from "@/lib/utils";
 import { PaletteScope } from "@/components/ui/PaletteScope";
 import { HexButton } from "@/components/ui/HexButton";
 import { MonoLabel } from "@/components/ui/MonoLabel";
 
-/* ──────────────────────────────────────────────────────────────────────────
-   Hero compartment — title bar (action row) + identity + metrics grid
-   ────────────────────────────────────────────────────────────────────── */
 function DashboardHero({
   profile, result, competitors, consultNum,
 }: {
@@ -27,10 +24,10 @@ function DashboardHero({
   const tier = getScoreTier(result.successScore);
 
   const metrics = [
-    { val: String(competitors.length),                       label: "Competitors" },
-    { val: `${(profile.radiusMeters / 1000).toFixed(1)}km`,  label: "Search radius" },
-    { val: String(result.scoreBreakdown.locationAppeal),     label: "Location appeal" },
-    { val: String(result.scoreBreakdown.marketDemand),       label: "Market demand" },
+    { val: String(competitors.length),                       label: "Pesaing" },
+    { val: `${(profile.radiusMeters / 1000).toFixed(1)}km`,  label: "Radius pencarian" },
+    { val: String(result.scoreBreakdown.locationAppeal),     label: "Daya tarik lokasi" },
+    { val: String(result.scoreBreakdown.marketDemand),       label: "Permintaan pasar" },
   ];
 
   return (
@@ -42,7 +39,6 @@ function DashboardHero({
         overflow: "hidden",
       }}
     >
-      {/* Title-bar action row — deep-emphasis strip */}
       <div
         className="compartment-header"
         style={{
@@ -62,7 +58,7 @@ function DashboardHero({
           }}
         >
           <ArrowLeft size={13} />
-          All analyses
+          Semua analisis
         </Link>
         <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
           {consultNum && (
@@ -74,7 +70,7 @@ function DashboardHero({
               fontSize: 10, fontWeight: 700, letterSpacing: "0.08em",
               textTransform: "uppercase",
             }}>
-              Consult #{consultNum}
+              Konsultasi #{consultNum}
             </span>
           )}
           <button
@@ -97,7 +93,7 @@ function DashboardHero({
               e.currentTarget.style.color = "var(--bright)";
             }}
           >
-            <Download size={12} /> Export
+            <Download size={12} /> Ekspor
           </button>
         </div>
       </div>
@@ -136,7 +132,7 @@ function DashboardHero({
             color: "var(--deep)", opacity: 0.65,
           }}>
             <Calendar size={12} />
-            {new Date(profile.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
+            {new Date(profile.createdAt).toLocaleDateString("id-ID", { year: "numeric", month: "short", day: "numeric" })}
           </span>
         </div>
       </div>
@@ -245,21 +241,71 @@ function Section({
   );
 }
 
-/* ──────────────────────────────────────────────────────────────────────────
-   Competitor ledger row — alternating soft/cream stripe
-   ────────────────────────────────────────────────────────────────────── */
-function CompetitorRow({ c, alt }: { c: Competitor; alt: boolean }) {
+const PRICE_TIER_LABEL: Record<number, string> = {
+  1: "Budget", 2: "Mid-range", 3: "Premium", 4: "Luxury",
+};
+
+function PriceDeltaBadge({ delta }: { delta: number }) {
+  const color = delta === 0 ? "#b91c1c" : delta === 1 ? "#d97706" : "#16a34a";
+  const bg = delta === 0 ? "#fee2e2" : delta === 1 ? "#fef3c7" : "#dcfce7";
+  const label = delta === 0 ? "Same tier" : delta === 1 ? `Δ${delta} tier` : `Δ${delta} tiers`;
+  return (
+    <span style={{
+      display: "inline-block",
+      background: bg, color,
+      padding: "2px 8px", borderRadius: 999,
+      fontFamily: "'Inter', system-ui, sans-serif",
+      fontSize: 10, fontWeight: 700, letterSpacing: "0.06em",
+      whiteSpace: "nowrap",
+    }}>
+      {label}
+    </span>
+  );
+}
+
+function CategoryBadge({ match }: { match: boolean }) {
+  return (
+    <span style={{
+      display: "inline-block",
+      background: match ? "var(--bright)" : "var(--soft)",
+      color: match ? "var(--deep)" : "color-mix(in srgb, var(--deep) 45%, transparent)",
+      padding: "2px 8px", borderRadius: 999,
+      fontFamily: "'Inter', system-ui, sans-serif",
+      fontSize: 10, fontWeight: 700, letterSpacing: "0.06em",
+      whiteSpace: "nowrap",
+    }}>
+      {match ? "✓ Match" : "No match"}
+    </span>
+  );
+}
+
+function CompetitorRow({ c, rank, alt }: { c: Competitor; rank: number; alt: boolean }) {
+  const isTopThreat = rank === 1;
   return (
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: "1fr 1fr auto auto",
-        gap: "1rem", alignItems: "center",
-        padding: "0.85rem 1.1rem",
+        gridTemplateColumns: "32px 1.4fr 1fr auto auto auto auto",
+        gap: "0.75rem", alignItems: "center",
+        padding: "0.75rem 1.1rem",
         borderRadius: 12,
-        background: alt ? "var(--soft)" : "transparent",
+        background: isTopThreat
+          ? "color-mix(in srgb, var(--deep) 8%, transparent)"
+          : alt ? "var(--soft)" : "transparent",
+        outline: isTopThreat ? "1.5px solid color-mix(in srgb, var(--deep) 20%, transparent)" : "none",
       }}
     >
+      {/* Rank */}
+      <div style={{
+        fontFamily: "'Inter', system-ui, sans-serif",
+        fontSize: 11, fontWeight: 700,
+        color: isTopThreat ? "var(--deep)" : "color-mix(in srgb, var(--deep) 35%, transparent)",
+        textAlign: "center",
+      }}>
+        {isTopThreat ? "🔥" : `#${rank}`}
+      </div>
+
+      {/* Name + type */}
       <div>
         <div style={{
           fontFamily: "'Inter', system-ui, sans-serif",
@@ -272,24 +318,39 @@ function CompetitorRow({ c, alt }: { c: Competitor; alt: boolean }) {
           {c.type.replace(/_/g, " ")}
         </MonoLabel>
       </div>
+
+      {/* Address */}
       <div style={{
         fontFamily: "'Inter', system-ui, sans-serif",
-        fontWeight: 500,
-        fontSize: 12, color: "color-mix(in srgb, var(--deep) 65%, transparent)",
+        fontWeight: 500, fontSize: 12,
+        color: "color-mix(in srgb, var(--deep) 65%, transparent)",
         overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
       }}>
         {c.vicinity}
       </div>
+
+      {/* Price delta */}
+      <div style={{ textAlign: "center" }}>
+        <PriceDeltaBadge delta={c.priceDelta ?? 0} />
+      </div>
+
+      {/* Category match */}
+      <div style={{ textAlign: "center" }}>
+        <CategoryBadge match={c.categoryMatch ?? false} />
+      </div>
+
+      {/* Distance */}
       <div style={{
         fontFamily: "'Inter', system-ui, sans-serif",
         fontSize: 12, fontWeight: 700, letterSpacing: "0.04em",
-        color: "var(--deep)",
-        fontVariantNumeric: "tabular-nums",
+        color: "var(--deep)", fontVariantNumeric: "tabular-nums",
         textAlign: "right",
       }}>
         {formatDistance(c.distanceMeters)}
       </div>
-      <div style={{ display: "flex", alignItems: "center", gap: 4, justifyContent: "flex-end", minWidth: 52 }}>
+
+      {/* Rating */}
+      <div style={{ display: "flex", alignItems: "center", gap: 4, justifyContent: "flex-end", minWidth: 44 }}>
         {c.rating ? (
           <>
             <Star style={{ width: 12, height: 12, fill: "var(--bright)", color: "var(--bright)", flexShrink: 0 }} />
@@ -309,9 +370,6 @@ function CompetitorRow({ c, alt }: { c: Competitor; alt: boolean }) {
   );
 }
 
-/* ──────────────────────────────────────────────────────────────────────────
-   DashboardPage
-   ────────────────────────────────────────────────────────────────────── */
 export default function DashboardPage() {
   const { profileId } = useParams<{ profileId: string }>();
   const [profile, setProfile] = useState<BusinessProfile | null>(null);
@@ -327,7 +385,7 @@ export default function DashboardPage() {
         setProfile(data.profile);
         setAllProfiles(listData.profiles ?? []);
       })
-      .catch(() => setError("Failed to load analysis results."))
+      .catch(() => setError("Gagal memuat hasil analisis."))
       .finally(() => setIsLoading(false));
   }, [profileId]);
 
@@ -368,10 +426,10 @@ export default function DashboardPage() {
         <main className="container" style={{ paddingTop: "1.5rem" }}>
           <div className="compartment" style={{ textAlign: "center" }}>
             <MonoLabel size="md" tone="ink" style={{ opacity: 0.7 }}>
-              {error || "Analysis not available."}
+              {error || "Analisis tidak tersedia."}
             </MonoLabel>
             <div style={{ marginTop: 24 }}>
-              <HexButton as="a" href="/history" variant="outline">Back to history</HexButton>
+              <HexButton as="a" href="/history" variant="outline">Kembali ke riwayat</HexButton>
             </div>
           </div>
         </main>
@@ -385,8 +443,7 @@ export default function DashboardPage() {
 
   return (
     <PaletteScope palette="green" as="div" className="paper-surface" style={{ minHeight: "100vh" }}>
-      {result.zone && <ZoneBanner zone={result.zone} />}
-      <Navbar consultLabel={consultNum ? `Consult #${consultNum}` : undefined} />
+      <Navbar consultLabel={consultNum ? `Konsultasi #${consultNum}` : undefined} />
 
       <main className="container" style={{
         display: "flex", flexDirection: "column",
@@ -401,12 +458,15 @@ export default function DashboardPage() {
           consultNum={consultNum}
         />
 
+        {/* ── 00 Zone Validation ───────────────────────────────────────── */}
+        {result.zone && <ZoneHeroSection zone={result.zone} />}
+
         {/* ── 01 BVI Score ─────────────────────────────────────────────── */}
         <Section
           anchor="A · BVI SCORE"
           count="01 / 04"
-          title="Business viability index."
-          description="A weighted composite of demand, location, uniqueness, and competition. Strongest metric highlighted in bright green; the rest in deep green."
+          title="Indeks kelayakan bisnis."
+          description="Komposit terbobot dari permintaan, lokasi, keunikan, dan persaingan. Metrik terkuat ditandai dengan hijau terang; sisanya dalam hijau tua."
         >
           <ScoreDisplay
             score={result.successScore}
@@ -419,18 +479,17 @@ export default function DashboardPage() {
         <Section
           anchor="B · SWOT"
           count="02 / 04"
-          title="Strengths, weaknesses, opportunities, threats."
-          description="Four quadrants. Bright tiles = positive signals. Deep tiles = friction and risk."
+          title="Kekuatan, kelemahan, peluang, ancaman."
+          description="Empat kuadran. Tile terang = sinyal positif. Tile gelap = hambatan dan risiko."
         >
           <SwotCard swot={result.swot} />
         </Section>
 
-        {/* ── 03 Competitors ───────────────────────────────────────────── */}
         <Section
           anchor="C · COMPETITORS"
           count="03 / 04"
-          title="What's already in the radius."
-          description="Pink dots are competing businesses; the dark dot is your candidate location."
+          title="Apa yang sudah ada di radius."
+          description="Titik pink adalah bisnis pesaing; titik gelap adalah lokasi kandidat Anda. Diurutkan berdasarkan tingkat ancaman: harga setara dulu, lalu kecocokan kategori, lalu jarak."
         >
           <div className="compartment-stack--tight" style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
             <CompetitorMap
@@ -441,6 +500,53 @@ export default function DashboardPage() {
               zone={result.zone}
             />
 
+            {/* Top Threat callout */}
+            {result.topCompetitor && (
+              <div className="compartment-inner" style={{
+                padding: "1rem 1.2rem",
+                display: "flex", flexWrap: "wrap", gap: "1rem", alignItems: "center",
+                justifyContent: "space-between",
+                outline: "1.5px solid color-mix(in srgb, var(--deep) 20%, transparent)",
+                borderRadius: 14,
+              }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                  <MonoLabel size="xs" tone="ink" style={{ opacity: 0.6 }}>🔥 Top threat competitor</MonoLabel>
+                  <div style={{
+                    fontFamily: "'Inter', system-ui, sans-serif",
+                    fontSize: 18, fontWeight: 800, color: "var(--deep)",
+                    letterSpacing: "-0.02em",
+                  }}>
+                    {result.topCompetitor.name}
+                  </div>
+                  <div style={{
+                    fontFamily: "'Inter', system-ui, sans-serif",
+                    fontSize: 11, color: "color-mix(in srgb, var(--deep) 60%, transparent)",
+                  }}>
+                    {result.topCompetitor.vicinity}
+                  </div>
+                </div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", alignItems: "center" }}>
+                  <span style={{
+                    background: "var(--deep)", color: "var(--bright)",
+                    padding: "5px 14px", borderRadius: 999,
+                    fontFamily: "'Inter', system-ui, sans-serif",
+                    fontSize: 11, fontWeight: 700, letterSpacing: "0.08em",
+                  }}>
+                    Your tier: {PRICE_TIER_LABEL[result.userPriceTier] ?? `T${result.userPriceTier}`}
+                  </span>
+                  <PriceDeltaBadge delta={result.topCompetitor.priceDelta} />
+                  <CategoryBadge match={result.topCompetitor.categoryMatch} />
+                  <span style={{
+                    fontFamily: "'Inter', system-ui, sans-serif",
+                    fontSize: 12, fontWeight: 600, color: "var(--deep)", opacity: 0.7,
+                  }}>
+                    {formatDistance(result.topCompetitor.distanceMeters)} away
+                    {result.topCompetitor.rating ? ` · ★ ${result.topCompetitor.rating}` : ""}
+                  </span>
+                </div>
+              </div>
+            )}
+
             {competitors.length > 0 && (
               <div className="compartment-inner" style={{ padding: "0.6rem" }}>
                 {/* Header strip */}
@@ -448,14 +554,14 @@ export default function DashboardPage() {
                   className="compartment-header"
                   style={{
                     display: "grid",
-                    gridTemplateColumns: "1fr 1fr auto auto",
-                    gap: "1rem",
+                    gridTemplateColumns: "32px 1.4fr 1fr auto auto auto auto",
+                    gap: "0.75rem",
                     padding: "0.55rem 1.1rem",
                     marginBottom: "0.4rem",
                     borderRadius: 12,
                   }}
                 >
-                  {["Business", "Address", "Distance", "Rating"].map((h) => (
+                  {["#", "Bisnis", "Alamat", "Delta Harga", "Kategori", "Jarak", "Rating"].map((h) => (
                     <div
                       key={h}
                       style={{
@@ -463,7 +569,7 @@ export default function DashboardPage() {
                         fontSize: 10, fontWeight: 700,
                         color: "var(--bright)", opacity: 0.85,
                         textTransform: "uppercase", letterSpacing: "0.14em",
-                        textAlign: h === "Distance" || h === "Rating" ? "right" : "left",
+                        textAlign: (h === "Distance" || h === "Rating" || h === "#") ? "center" : "left",
                       }}
                     >
                       {h}
@@ -481,7 +587,7 @@ export default function DashboardPage() {
                       viewport={{ once: true }}
                       transition={{ delay: i * 0.02 }}
                     >
-                      <CompetitorRow c={c} alt={i % 2 === 1} />
+                      <CompetitorRow c={c} rank={i + 1} alt={i % 2 === 1} />
                     </motion.div>
                   ))}
                 </div>
@@ -505,7 +611,7 @@ export default function DashboardPage() {
                     onMouseEnter={(e) => { e.currentTarget.style.background = "var(--deep)"; e.currentTarget.style.color = "var(--bright)"; }}
                     onMouseLeave={(e) => { e.currentTarget.style.background = "var(--soft)"; e.currentTarget.style.color = "var(--deep)"; }}
                   >
-                    {showAll ? "Show fewer" : `Show all ${competitors.length} competitors`}
+                    {showAll ? "Tampilkan lebih sedikit" : `Tampilkan semua ${competitors.length} pesaing`}
                   </button>
                 )}
               </div>
@@ -513,7 +619,7 @@ export default function DashboardPage() {
 
             {competitors.length === 0 && (
               <div className="compartment-inner" style={{ padding: "3rem 0", textAlign: "center" }}>
-                <MonoLabel tone="ink" style={{ opacity: 0.5 }}>No competitors found in this radius</MonoLabel>
+                <MonoLabel tone="ink" style={{ opacity: 0.5 }}>Tidak ada pesaing ditemukan dalam radius ini</MonoLabel>
               </div>
             )}
           </div>
@@ -523,15 +629,15 @@ export default function DashboardPage() {
         <Section
           anchor="D · ROADMAP"
           count="04 / 04"
-          title="What to do about it."
-          description="Three pillars for differentiation, pricing, and visibility — concrete next moves for this location."
+          title="Apa yang harus dilakukan."
+          description="Tiga pilar untuk diferensiasi, harga, dan visibilitas: langkah konkret berikutnya untuk lokasi ini."
         >
           <RoadmapCard roadmap={result.strategicRoadmap} />
         </Section>
 
         {/* ── 05 Products (conditional) ────────────────────────────────── */}
         {profile.products.length > 0 && (
-          <Section anchor="E · PRODUCTS" count="05 / —" title="Catalog snapshot.">
+          <Section anchor="E · PRODUK" count="05 / —" title="Snapshot katalog.">
             <div className="compartment-inner" style={{ padding: "0.6rem" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
                 {profile.products.map((p, i) => (
@@ -584,9 +690,9 @@ export default function DashboardPage() {
             ap-analysis.
           </span>
           <div style={{ display: "flex", gap: "0.8rem" }}>
-            <HexButton as="a" href="/history" variant="outline">All reports</HexButton>
+            <HexButton as="a" href="/history" variant="outline">Semua laporan</HexButton>
             <HexButton as="a" href="/survey" variant="solid">
-              New analysis <ArrowRight size={14} />
+              Analisis baru <ArrowRight size={14} />
             </HexButton>
           </div>
         </footer>

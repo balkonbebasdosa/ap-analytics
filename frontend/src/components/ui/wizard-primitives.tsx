@@ -113,6 +113,38 @@ export function RangeSlider({
   min, max, step = 1, value, onChange, format, ticks,
 }: RangeSliderProps) {
   const display = format ? format(value) : String(value);
+  const scaleTicks = ticks ?? [];
+  const useTickScale = scaleTicks.length > 1;
+  const sliderMin = useTickScale ? 0 : min;
+  const sliderMax = useTickScale ? scaleTicks.length - 1 : max;
+  const sliderStep = useTickScale ? 0.01 : step;
+
+  const valueToScale = (rawValue: number) => {
+    if (!useTickScale) return rawValue;
+    const orderedTicks = scaleTicks;
+    if (rawValue <= orderedTicks[0].value) return 0;
+    for (let i = 0; i < orderedTicks.length - 1; i += 1) {
+      const start = orderedTicks[i].value;
+      const end = orderedTicks[i + 1].value;
+      if (rawValue <= end) {
+        return i + (rawValue - start) / (end - start);
+      }
+    }
+    return orderedTicks.length - 1;
+  };
+
+  const scaleToValue = (scaledValue: number) => {
+    if (!useTickScale) return scaledValue;
+    const orderedTicks = scaleTicks;
+    const lowerIndex = Math.min(Math.floor(scaledValue), orderedTicks.length - 2);
+    const upperIndex = lowerIndex + 1;
+    const localProgress = scaledValue - lowerIndex;
+    const rawValue = orderedTicks[lowerIndex].value +
+      (orderedTicks[upperIndex].value - orderedTicks[lowerIndex].value) * localProgress;
+    const steppedValue = Math.round(rawValue / step) * step;
+    return Math.min(max, Math.max(min, steppedValue));
+  };
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
       <div style={{
@@ -127,9 +159,9 @@ export function RangeSlider({
       <input
         type="range"
         className="range-slider"
-        min={min} max={max} step={step}
-        value={value}
-        onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(Number(e.target.value))}
+        min={sliderMin} max={sliderMax} step={sliderStep}
+        value={valueToScale(value)}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(scaleToValue(Number(e.target.value)))}
       />
       {ticks && (
         <div style={{ display: "flex", justifyContent: "space-between" }}>

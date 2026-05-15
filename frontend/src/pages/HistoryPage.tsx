@@ -12,9 +12,9 @@ import { MonoLabel } from "@/components/ui/MonoLabel";
 
 /* Zone label → tone mapping. All within the green family. */
 const ZONE_CHIP: Record<string, { bg: string; fg: string }> = {
-  MERAH:  { bg: "var(--deep)",   fg: "var(--bright)" },
-  KUNING: { bg: "var(--bright)", fg: "var(--deep)" },
-  HIJAU:  { bg: "var(--mist)",   fg: "var(--deep)" },
+  MERAH:  { bg: "#F87171", fg: "#2B0F0F" },
+  KUNING: { bg: "#FACC15", fg: "#2F2600" },
+  HIJAU:  { bg: "#86EFAC", fg: "#12351F" },
 };
 
 const STATUS_CHIP: Record<BusinessProfile["status"], { bg: string; fg: string }> = {
@@ -22,6 +22,13 @@ const STATUS_CHIP: Record<BusinessProfile["status"], { bg: string; fg: string }>
   PROCESSING: { bg: "var(--bright)", fg: "var(--deep)" },
   FAILED:     { bg: "var(--deep)",   fg: "var(--bright)" },
   PENDING:    { bg: "var(--soft)",   fg: "var(--deep)" },
+};
+
+const STATUS_LABELS: Record<BusinessProfile["status"], string> = {
+  COMPLETED:  "Selesai",
+  PROCESSING: "Diproses",
+  FAILED:     "Gagal",
+  PENDING:    "Menunggu",
 };
 
 function StatusPill({ status }: { status: BusinessProfile["status"] }) {
@@ -34,7 +41,7 @@ function StatusPill({ status }: { status: BusinessProfile["status"] }) {
       fontSize: 10, fontWeight: 700, letterSpacing: "0.08em",
       textTransform: "uppercase",
     }}>
-      {status}
+      {STATUS_LABELS[status]}
     </span>
   );
 }
@@ -76,7 +83,7 @@ export default function HistoryPage() {
   }, []);
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Delete this analysis?")) return;
+    if (!confirm("Hapus analisis ini?")) return;
     await businessApi.delete(id);
     setProfiles((prev) => prev.filter((p) => p.id !== id));
   };
@@ -99,26 +106,26 @@ export default function HistoryPage() {
             gap: "1.5rem",
           }}>
             <div>
-              <SectionHeader anchor="YOUR ANALYSES" />
-              <h1 className="display-xl">Past consults.</h1>
+              <SectionHeader anchor="ANALISIS ANDA" />
+              <h1 className="display-xl">Konsultasi lalu.</h1>
               <p className="serif-body" style={{
                 marginTop: "0.8rem",
                 color: "color-mix(in srgb, var(--deep) 72%, transparent)",
                 maxWidth: 520,
               }}>
-                Every location you've analyzed lives here. Open one to see its score
-                and roadmap, or delete it to clear the board.
+                Semua lokasi yang pernah Anda analisis ada di sini. Buka untuk melihat skor
+                dan roadmap, atau hapus untuk membersihkan daftar.
               </p>
             </div>
             <HexButton as="a" href="/survey" variant="solid">
-              <PlusCircle size={14} /> New consult
+              <PlusCircle size={14} /> Konsultasi baru
             </HexButton>
           </div>
         </section>
 
         {/* Results compartment */}
         <section className="compartment">
-          <SectionHeader anchor="ALL ANALYSES" count={profiles.length > 0 ? `${profiles.length} TOTAL` : "—"} />
+          <SectionHeader anchor="SEMUA ANALISIS" count={profiles.length > 0 ? `${profiles.length} TOTAL` : "—"} />
 
           {isLoading ? (
             <div className="compartment-inner" style={{ padding: "4rem 0", display: "flex", justifyContent: "center" }}>
@@ -145,22 +152,25 @@ export default function HistoryPage() {
               }}>
                 —
               </div>
-              <MonoLabel size="md" tone="ink" style={{ marginBottom: "0.6rem" }}>No analyses yet</MonoLabel>
+              <MonoLabel size="md" tone="ink" style={{ marginBottom: "0.6rem" }}>Belum ada analisis</MonoLabel>
               <p className="serif-body" style={{
                 color: "color-mix(in srgb, var(--deep) 70%, transparent)",
                 marginBottom: "1.6rem",
               }}>
-                Run your first consult to see results here.
+                Jalankan konsultasi pertama Anda untuk melihat hasilnya di sini.
               </p>
               <HexButton as="a" href="/survey" variant="solid">
-                Start your first analysis <ArrowRight size={14} />
+                Mulai analisis pertama Anda <ArrowRight size={14} />
               </HexButton>
             </div>
           ) : (
             <div style={{
               display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
+              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 360px), 1fr))",
               gap: "0.8rem",
+              width: "100%",
+              minWidth: 0,
+              overflow: "hidden",
             }} className="history-grid">
               {profiles.map((profile, i) => {
                 const result = profile.analysisResult as AnalysisResult | null;
@@ -177,6 +187,8 @@ export default function HistoryPage() {
                     style={{
                       display: "flex", flexDirection: "column",
                       gap: "0.9rem",
+                      minWidth: 0,
+                      overflow: "hidden",
                       transition: "background 200ms",
                     }}
                     onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "var(--soft)"; }}
@@ -244,12 +256,13 @@ export default function HistoryPage() {
                     </div>
 
                     {/* Meta */}
-                    <div className="compartment-well" style={{ padding: "0.65rem 0.85rem", display: "flex", flexDirection: "column", gap: "0.3rem" }}>
+                    <div className="compartment-well" style={{ padding: "0.65rem 0.85rem", display: "flex", flexDirection: "column", gap: "0.3rem", minWidth: 0, overflow: "hidden" }}>
                       <div style={{
                         display: "flex", alignItems: "center", gap: 6,
                         fontFamily: "'Inter', system-ui, sans-serif",
                         fontSize: 11, fontWeight: 500, letterSpacing: "0.04em",
                         color: "var(--deep)", opacity: 0.72,
+                        minWidth: 0,
                       }}>
                         <MapPin size={11} style={{ flexShrink: 0 }} />
                         <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
@@ -261,9 +274,10 @@ export default function HistoryPage() {
                         fontFamily: "'Inter', system-ui, sans-serif",
                         fontSize: 11, fontWeight: 500, letterSpacing: "0.04em",
                         color: "var(--deep)", opacity: 0.72,
+                        minWidth: 0,
                       }}>
                         <Calendar size={11} style={{ flexShrink: 0 }} />
-                        {new Date(profile.createdAt).toLocaleDateString("en-US", {
+                        {new Date(profile.createdAt).toLocaleDateString("id-ID", {
                           year: "numeric", month: "short", day: "numeric",
                         })}
                       </div>
@@ -292,14 +306,14 @@ export default function HistoryPage() {
                           onMouseEnter={(e) => { e.currentTarget.style.background = "color-mix(in srgb, var(--deep) 84%, var(--bright))"; }}
                           onMouseLeave={(e) => { e.currentTarget.style.background = "var(--deep)"; }}
                         >
-                          View report <ArrowRight size={11} />
+                          Lihat laporan <ArrowRight size={11} />
                         </Link>
                       ) : (
                         <StatusPill status={profile.status} />
                       )}
                       <button
                         onClick={() => handleDelete(profile.id)}
-                        aria-label="Delete analysis"
+                        aria-label="Hapus analisis"
                         style={{
                           background: "transparent", border: "none", cursor: "pointer",
                           padding: 6, borderRadius: 999,
@@ -322,7 +336,7 @@ export default function HistoryPage() {
       </main>
 
       <style>{`
-        @media (max-width: 1024px) { .history-grid { grid-template-columns: 1fr 1fr !important; } }
+        @media (max-width: 1024px) { .history-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)) !important; } }
         @media (max-width: 640px)  { .history-grid { grid-template-columns: 1fr !important; } }
         @keyframes spin { to { transform: rotate(360deg); } }
       `}</style>

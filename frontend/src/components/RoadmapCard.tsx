@@ -17,7 +17,7 @@ const SECTIONS: {
   {
     key:      "differentiation",
     letter:   "A",
-    label:    "Product differentiation",
+    label:    "Diferensiasi produk",
     bg:       "var(--deep)",
     fg:       "var(--cream)",
     node:     "var(--bright)",
@@ -27,7 +27,7 @@ const SECTIONS: {
   {
     key:      "pricing",
     letter:   "B",
-    label:    "Pricing strategy",
+    label:    "Strategi harga",
     bg:       "var(--bright)",
     fg:       "var(--deep)",
     node:     "var(--deep)",
@@ -37,7 +37,7 @@ const SECTIONS: {
   {
     key:      "marketing",
     letter:   "C",
-    label:    "Marketing & visibility",
+    label:    "Pemasaran & visibilitas",
     bg:       "var(--bright)",
     fg:       "var(--deep)",
     node:     "var(--deep)",

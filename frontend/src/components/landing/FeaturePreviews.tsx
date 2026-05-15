@@ -40,7 +40,7 @@ function LocationIntelPreview() {
     { x: 36, y: 74 }, { x: 60, y: 52 },
   ];
   return (
-    <PreviewShell instruction="Hover to scan the area">
+    <PreviewShell instruction="Arahkan untuk memindai area">
       <div
         onMouseEnter={() => setScanning(true)}
         onMouseLeave={() => setScanning(false)}
@@ -82,7 +82,7 @@ function LocationIntelPreview() {
           }}
         />
         <span style={{ ...monoLabel, position: "absolute", bottom: 9, left: 11, color: "var(--deep)", opacity: 0.6 }}>
-          {scanning ? "5 competitors found" : "radius idle"}
+          {scanning ? "5 pesaing ditemukan" : "radius diam"}
         </span>
       </div>
     </PreviewShell>
@@ -93,13 +93,13 @@ function LocationIntelPreview() {
 function SwotPreview() {
   const [active, setActive] = useState<number | null>(null);
   const tiles = [
-    { letter: "S", label: "Strengths", solid: true },
-    { letter: "W", label: "Weaknesses", solid: true },
-    { letter: "O", label: "Opportunities", solid: false },
-    { letter: "T", label: "Threats", solid: false },
+    { letter: "S", label: "Kekuatan", solid: true },
+    { letter: "W", label: "Kelemahan", solid: true },
+    { letter: "O", label: "Peluang", solid: false },
+    { letter: "T", label: "Ancaman", solid: false },
   ];
   return (
-    <PreviewShell instruction="Click a quadrant to expand">
+    <PreviewShell instruction="Klik kuadran untuk perluas">
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, height: FRAME_HEIGHT }}>
         {tiles.map((t, i) => {
           const isActive = active === i;
@@ -143,16 +143,16 @@ function SwotPreview() {
 /* ── 03 · BVI score — drag the slider to move the gauge ────────────────── */
 function BviScorePreview() {
   const [score, setScore] = useState(39);
-  const label = score < 40 ? "Challenging" : score < 70 ? "Moderate" : "Strong";
+  const label = score < 40 ? "Menantang" : score < 70 ? "Sedang" : "Kuat";
   const r = 26;
   const circ = 2 * Math.PI * r;
   const dash = (score / 100) * circ;
   const bars = [
-    { label: "Demand", value: Math.min(100, score + 18) },
-    { label: "Location", value: Math.max(0, score - 6) },
+    { label: "Permintaan", value: Math.min(100, score + 18) },
+    { label: "Lokasi", value: Math.max(0, score - 6) },
   ];
   return (
-    <PreviewShell instruction="Drag to move the score">
+    <PreviewShell instruction="Geser untuk ubah skor">
       <div
         style={{
           height: FRAME_HEIGHT, borderRadius: 14,
@@ -183,7 +183,7 @@ function BviScorePreview() {
             </div>
           </div>
           <div>
-            <div style={{ ...monoLabel, color: "var(--bright)", opacity: 0.7 }}>BVI Score</div>
+            <div style={{ ...monoLabel, color: "var(--bright)", opacity: 0.7 }}>Skor BVI</div>
             <div style={{ fontFamily: "'Inter', system-ui, sans-serif", fontSize: 13, fontWeight: 700, color: "var(--cream)", marginTop: 2 }}>
               {label}
             </div>
@@ -204,7 +204,7 @@ function BviScorePreview() {
         <input
           type="range" min={0} max={100} value={score}
           onChange={(e) => setScore(Number(e.target.value))}
-          aria-label="BVI score preview"
+          aria-label="Pratinjau skor BVI"
           className="bvi-mini-range"
         />
 
@@ -235,11 +235,11 @@ function BviScorePreview() {
 /* ── 04 · Strategic roadmap — click a step to mark it done ─────────────── */
 function RoadmapPreview() {
   const [done, setDone] = useState<number[]>([]);
-  const steps = ["Differentiate the concept", "Set entry pricing", "Target local visibility"];
+  const steps = ["Diferensiasi konsep", "Tentukan harga masuk", "Targetkan visibilitas lokal"];
   const toggle = (i: number) =>
     setDone((d) => (d.includes(i) ? d.filter((x) => x !== i) : [...d, i]));
   return (
-    <PreviewShell instruction="Click a step to complete it">
+    <PreviewShell instruction="Klik langkah untuk selesaikan">
       <div
         style={{
           height: FRAME_HEIGHT, borderRadius: 14,
@@ -304,7 +304,7 @@ function DataDrivenPreview() {
     { name: "Kopi Tuku", dist: "780m", rating: "4.4" },
   ];
   return (
-    <PreviewShell instruction="Hover a competitor row">
+    <PreviewShell instruction="Arahkan ke baris pesaing">
       <div
         style={{
           height: FRAME_HEIGHT, borderRadius: 14,
@@ -349,7 +349,7 @@ function VisualAnalyticsPreview() {
   const peak = bars.indexOf(Math.max(...bars));
   const [hover, setHover] = useState<number>(peak);
   return (
-    <PreviewShell instruction="Hover a bar for its value">
+    <PreviewShell instruction="Arahkan ke batang untuk nilainya">
       <div
         style={{
           height: FRAME_HEIGHT, borderRadius: 14,

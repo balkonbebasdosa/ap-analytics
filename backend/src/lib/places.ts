@@ -1,10 +1,10 @@
-const PLACES_API_KEY = process.env.GOOGLE_MAPS_API_KEY ?? "";
-
 export interface PlaceResult {
   name: string;
   type: string;
+  allTypes: string[];
   rating: number | null;
   userRatingsTotal: number | null;
+  priceLevel: number | null;
   vicinity: string;
   placeId: string;
   lat: number;
@@ -17,6 +17,7 @@ interface GooglePlacesNearbyResult {
   types: string[];
   rating?: number;
   user_ratings_total?: number;
+  price_level?: number;
   vicinity: string;
   place_id: string;
   geometry: {
@@ -29,20 +30,6 @@ interface GooglePlacesNearbyResponse {
   next_page_token?: string;
   status: string;
 }
-
-const CATEGORY_MAP: Record<string, string[]> = {
-  "f&b": ["restaurant", "cafe", "bar", "bakery"],
-  "food & beverage": ["restaurant", "cafe", "bar", "bakery"],
-  "retail": ["shopping_mall", "supermarket", "clothing_store", "electronics_store", "convenience_store"],
-  "beauty": ["beauty_salon", "hair_care", "spa"],
-  "health": ["doctor", "hospital", "pharmacy", "dentist", "physiotherapist"],
-  "education": ["school", "university", "library"],
-  "entertainment": ["movie_theater", "amusement_park", "night_club", "bowling_alley"],
-  "automotive": ["car_repair", "car_wash"],
-  "laundry": ["laundry"],
-  "services": ["plumber", "electrician"],
-  "technology": ["electronics_store"],
-};
 
 const BLACKLISTED_TYPES = ["place_of_worship", "bank"];
 
@@ -66,83 +53,86 @@ export async function fetchNearbyCompetitors(
   category: string
 ): Promise<PlaceResult[]> {
   console.log("FETCH_COMPETITORS_START:", { lat, lng, radiusMeters, category });
-  const normalizedCategory = category.toLowerCase();
-  const targetTypes = CATEGORY_MAP[normalizedCategory] || [];
+  
   const allResults: PlaceResult[] = [];
   const seen = new Set<string>();
 
-  const searchTasks = targetTypes.length > 0 
-    ? targetTypes.map(type => ({ type })) 
-    : [{ keyword: category }];
+  let nextPageToken: string | undefined = undefined;
+  let pageCount = 0;
+  const maxPages = 3; // Up to 60 results
 
-  const resultsArray = await Promise.all(
-    searchTasks.map(async (task) => {
-      const url = new URL("https://maps.googleapis.com/maps/api/place/nearbysearch/json");
+  do {
+    const url = new URL("https://maps.googleapis.com/maps/api/place/nearbysearch/json");
+    url.searchParams.set("key", process.env.GOOGLE_MAPS_API_KEY ?? "");
+
+    if (nextPageToken) {
+      url.searchParams.set("pagetoken", nextPageToken);
+      // Google API requires a short delay before the next_page_token is valid
+      await new Promise(resolve => setTimeout(resolve, 2000));
+    } else {
       url.searchParams.set("location", `${lat},${lng}`);
       url.searchParams.set("radius", String(Math.min(radiusMeters, 50000)));
-      url.searchParams.set("key", PLACES_API_KEY);
+      url.searchParams.set("type", category);
+    }
 
-      if ("type" in task) {
-        url.searchParams.set("type", task.type);
-      } else {
-        url.searchParams.set("keyword", task.keyword);
+    console.log(`GOOGLE_PLACES_REQUEST_PAGE_${pageCount + 1}`);
+
+    try {
+      const response = await fetch(url.toString());
+      const data = await response.json() as GooglePlacesNearbyResponse;
+      
+      console.log(`GOOGLE_PLACES_RESPONSE_STATUS_PAGE_${pageCount + 1}:`, data.status);
+
+      if (data.status !== "OK" && data.status !== "ZERO_RESULTS") {
+        console.error("GOOGLE_PLACES_ERROR_DATA:", data);
+        break; // Stop fetching if error
       }
 
-      console.log("GOOGLE_PLACES_REQUEST_URL:", url.toString());
+      const results = data.results || [];
+      for (const place of results) {
+        if (seen.has(place.place_id)) continue;
 
-      try {
-        const response = await fetch(url.toString());
-        const data = await response.json() as GooglePlacesNearbyResponse;
-        
-        console.log("GOOGLE_PLACES_RESPONSE_STATUS:", data.status, "FOR_TASK:", JSON.stringify(task));
-
-        if (data.status !== "OK" && data.status !== "ZERO_RESULTS") {
-          console.error("GOOGLE_PLACES_ERROR_DATA:", data);
-          return [];
+        if (place.types.some(t => BLACKLISTED_TYPES.includes(t))) {
+          continue;
         }
 
-        return data.results || [];
-      } catch (error) {
-        console.error("GOOGLE_PLACES_FETCH_ERROR:", error);
-        return [];
+        // STRICT FILTER: Ensure the place actually belongs to the requested category.
+        // Google Maps sometimes ignores the 'type' parameter and returns generic nearby places.
+        if (!place.types.includes(category)) {
+          continue;
+        }
+
+        seen.add(place.place_id);
+
+        const dist = haversineDistance(lat, lng, place.geometry.location.lat, place.geometry.location.lng);
+        
+        if (dist > radiusMeters) {
+          continue;
+        }
+
+        allResults.push({
+          name: place.name,
+          type: place.types[0] || "establishment",
+          allTypes: place.types,
+          rating: place.rating ?? null,
+          userRatingsTotal: place.user_ratings_total ?? null,
+          priceLevel: place.price_level ?? null,
+          vicinity: place.vicinity,
+          placeId: place.place_id,
+          lat: place.geometry.location.lat,
+          lng: place.geometry.location.lng,
+          distanceMeters: Math.round(dist),
+        });
       }
-    })
-  );
 
-  for (const results of resultsArray) {
-    for (const place of results) {
-      if (seen.has(place.place_id)) continue;
+      nextPageToken = data.next_page_token;
+      pageCount++;
 
-      const isBlacklisted = place.types.some(t => BLACKLISTED_TYPES.includes(t));
-      if (isBlacklisted) {
-        console.log("SKIPPING_BLACKLISTED_PLACE:", place.name, "TYPES:", place.types);
-        continue;
-      }
-
-      seen.add(place.place_id);
-
-      const dist = haversineDistance(lat, lng, place.geometry.location.lat, place.geometry.location.lng);
-      
-      if (dist > radiusMeters) {
-        console.log("SKIPPING_TOO_FAR_PLACE:", place.name, "DIST:", Math.round(dist), "LIMIT:", radiusMeters);
-        continue;
-      }
-
-      console.log("ADDING_COMPETITOR:", place.name, "DIST:", Math.round(dist));
-
-      allResults.push({
-        name: place.name,
-        type: place.types[0] || "establishment",
-        rating: place.rating ?? null,
-        userRatingsTotal: place.user_ratings_total ?? null,
-        vicinity: place.vicinity,
-        placeId: place.place_id,
-        lat: place.geometry.location.lat,
-        lng: place.geometry.location.lng,
-        distanceMeters: Math.round(dist),
-      });
+    } catch (error) {
+      console.error("GOOGLE_PLACES_FETCH_ERROR:", error);
+      break;
     }
-  }
+  } while (nextPageToken && pageCount < maxPages);
 
   console.log("FINAL_COMPETITOR_COUNT:", allResults.length);
 

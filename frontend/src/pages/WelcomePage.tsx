@@ -7,10 +7,10 @@ import { HexButton } from "@/components/ui/HexButton";
 import { MonoLabel, SectionEyebrow } from "@/components/ui/MonoLabel";
 
 const STEPS = [
-  { num: "01", title: "Business identity",   desc: "Tell us about your business category, concept, and key offerings." },
-  { num: "02", title: "Products & goals",    desc: "List what you sell with prices, and pick the strategic goals to optimize for." },
-  { num: "03", title: "Location & radius",   desc: "Drop a pin and set the competitive zone, anywhere from 0.5 km to 10 km." },
-  { num: "04", title: "AI analysis",         desc: "Our AI scans competitors and generates your full analytics report." },
+  { num: "01", title: "Identitas bisnis",  desc: "Ceritakan kategori, konsep, dan produk utama bisnis Anda." },
+  { num: "02", title: "Produk & tujuan",   desc: "Daftarkan produk dengan harga, dan pilih tujuan strategis untuk dioptimalkan." },
+  { num: "03", title: "Lokasi & radius",   desc: "Tandai pin dan tentukan zona persaingan, dari 0,5 km hingga 10 km." },
+  { num: "04", title: "Analisis AI",       desc: "AI kami memindai pesaing dan membuat laporan analitik lengkap Anda." },
 ];
 
 export default function WelcomePage() {
@@ -34,10 +34,10 @@ export default function WelcomePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
-            <SectionEyebrow anchor="AI BUSINESS LOCATION SURVEYOR" />
+            <SectionEyebrow anchor="SURVEYOR LOKASI BISNIS AI" />
 
             <h1 className="display-hero" style={{ textAlign: "left", maxWidth: 1100 }}>
-              Welcome back,<br />
+              Selamat datang,<br />
               <span style={{ color: "var(--bright)" }}>{firstName}</span>.
             </h1>
 
@@ -45,8 +45,7 @@ export default function WelcomePage() {
               marginTop: "1.6rem", maxWidth: 600,
               color: "color-mix(in srgb, var(--deep) 75%, transparent)",
             }}>
-              Run a new analysis or pick up where you left off. Each consult takes
-              about a minute end-to-end.
+              Jalankan analisis baru atau lanjutkan dari yang terakhir. Setiap konsultasi membutuhkan sekitar satu menit.
             </p>
 
             <div style={{
@@ -54,10 +53,10 @@ export default function WelcomePage() {
               display: "flex", flexWrap: "wrap", gap: "0.8rem",
             }}>
               <HexButton as="a" href="/survey" variant="solid">
-                Start new consult <ArrowRight size={14} />
+                Konsultasi baru <ArrowRight size={14} />
               </HexButton>
               <HexButton as="a" href="/history" variant="outline">
-                Past consults
+                Konsultasi lalu
               </HexButton>
             </div>
           </motion.div>
@@ -65,7 +64,7 @@ export default function WelcomePage() {
 
         {/* ── Steps compartment ────────────────────────────────────────── */}
         <section className="compartment">
-          <SectionEyebrow anchor="HOW A CONSULT FLOWS" label="01 / 01" />
+          <SectionEyebrow anchor="ALUR KONSULTASI" label="01 / 01" />
 
           <div style={{
             display: "grid",

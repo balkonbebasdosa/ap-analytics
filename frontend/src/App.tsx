@@ -8,28 +8,17 @@ import WelcomePage from "@/pages/WelcomePage";
 import WizardPage from "@/pages/WizardPage";
 import DashboardPage from "@/pages/DashboardPage";
 import HistoryPage from "@/pages/HistoryPage";
+import PricingPage from "@/pages/PricingPage";
+import AboutPage from "@/pages/AboutPage";
+import NotFoundPage from "@/pages/NotFoundPage";
+import ErrorPage from "@/pages/ErrorPage";
 
 class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
   state = { error: null };
   static getDerivedStateFromError(error: Error) { return { error }; }
   render() {
     if (this.state.error) {
-      return (
-        <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-cream p-8 text-center">
-          <h2 className="font-display text-2xl font-black text-foreground">Something went wrong</h2>
-          <pre className="max-w-xl overflow-auto rounded-xl border border-card-border bg-white p-4 text-left text-xs text-destructive">
-            {(this.state.error as Error).message}
-            {"\n"}
-            {(this.state.error as Error).stack}
-          </pre>
-          <button
-            onClick={() => window.location.href = "/"}
-            className="rounded-full bg-foreground px-6 py-2.5 text-sm font-semibold text-white"
-          >
-            Go home
-          </button>
-        </div>
-      );
+      return <ErrorPage error={this.state.error} />;
     }
     return this.props.children;
   }
@@ -53,12 +42,14 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
+      <Route path="/pricing" element={<PricingPage />} />
+      <Route path="/about" element={<AboutPage />} />
       <Route path="/auth" element={<PublicRoute><AuthPage /></PublicRoute>} />
       <Route path="/welcome" element={<ProtectedRoute><WelcomePage /></ProtectedRoute>} />
       <Route path="/survey" element={<ProtectedRoute><WizardProvider><WizardPage /></WizardProvider></ProtectedRoute>} />
       <Route path="/dashboard/:profileId" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
       <Route path="/history" element={<ProtectedRoute><HistoryPage /></ProtectedRoute>} />
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }

@@ -2,6 +2,8 @@ import { spawn, ChildProcess } from "child_process";
 import path from "path";
 import { EventEmitter } from "events";
 import { fetchZoneLive, type ZoneResult } from "./zoneService";
+import { getBusinessFeedback } from "./feedbackGenerator";
+import { getDetailedStrategy } from "./businessStrategy";
 
 export type { ZoneResult };
 
@@ -50,8 +52,8 @@ export interface AnalysisResult {
   zone?: ZoneResult;
 }
 
-const ML_TIMEOUT_MS = 60_000;
-const ZONE_TIMEOUT_MS = 3_000;
+const ML_TIMEOUT_MS = 60000;
+const ZONE_TIMEOUT_MS = 3000;
 
 let pythonProcess: ChildProcess | null = null;
 const eventEmitter = new EventEmitter();
@@ -128,30 +130,27 @@ export async function runMLAnalysis(input: MLAnalysisInput): Promise<AnalysisRes
       const pythonZone = result.zone as ZoneResult | undefined;
       const { lat, lng } = input.location;
 
+      const bviScore = Math.round(preds.success_score);
+      const strategy = getDetailedStrategy(input.category, bviScore);
+
       const baseResult: AnalysisResult = {
-        successScore: Math.round(preds.success_score),
+        successScore: bviScore,
         scoreBreakdown: {
           competitionDensity: Math.round(preds.competition_density_score),
           locationAppeal: Math.round(preds.location_appeal_score),
           marketDemand: Math.round(preds.market_demand_score),
           conceptUniqueness: Math.round(preds.concept_uniqueness_score),
         },
-        swot: {
-          strengths: ["Locally validated concept", "Data-driven positioning"],
-          weaknesses: ["Requires continuous market monitoring", "New entrant risks"],
-          opportunities: ["Local demand identified", "Potential for unique offerings"],
-          threats: ["Existing local competition", "Changing consumer preferences"],
-        },
+        swot: strategy.swot,
         strategicRoadmap: {
-          differentiation: ["Emphasize unique aspects of your concept"],
-          pricing: ["Monitor local averages closely"],
-          marketing: ["Focus on localized outreach"],
+          differentiation: [strategy.advices[0]],
+          pricing: [strategy.advices[1]],
+          marketing: [strategy.advices[2]],
         },
-        summary: `Based on a local ML analysis, the business has a success score of ${Math.round(preds.success_score)}/100. Consider the score breakdown for targeted improvements.`,
+        summary: getBusinessFeedback(input.concept, bviScore),
         zone: pythonZone,
       };
 
-      // Try live RDTR zone lookup — overrides Python GeoPandas zone if successful
       fetchZoneLive(lat, lng)
         .then((liveZone) => {
           resolve({
@@ -240,3 +239,4 @@ export async function runZoneClassification(lat: number, lng: number): Promise<Z
     }) + "\n");
   });
 }
+

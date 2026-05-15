@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useLayoutEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
@@ -13,25 +13,25 @@ import { stepPreviews } from "@/components/landing/StepPreviews";
    ────────────────────────────────────────────────────────────────────── */
 
 const stats = [
-  { value: "0.5–10km", label: "Radius scan" },
-  { value: "Real-time",label: "Places data" },
-  { value: "0 IDR",    label: "Forever" },
+  { value: "0.5–10km", label: "Jangkauan scan" },
+  { value: "Real-time", label: "Data tempat" },
+  { value: "0 IDR",    label: "Selamanya" },
 ];
 
 const steps = [
-  { num: "01", title: "Describe your business",   desc: "Category, concept, and key offerings. We capture the shape of what you sell." },
-  { num: "02", title: "Drop your pin",            desc: "Mark your intended location on the map. We scan everything around it." },
-  { num: "03", title: "Set your impact radius",   desc: "Anywhere from 0.5 km to 10 km — the competitive zone you care about." },
-  { num: "04", title: "Read your dashboard",      desc: "BVI score, competitor map, SWOT, and a strategic roadmap — instantly." },
+  { num: "01", title: "Jelaskan bisnis Anda",   desc: "Kategori, konsep, dan produk unggulan. Kami tangkap gambaran bisnis Anda." },
+  { num: "02", title: "Tandai lokasi Anda",     desc: "Tandai lokasi rencana di peta. Kami scan sekelilingnya." },
+  { num: "03", title: "Tentukan radius dampak", desc: "Dari 0,5 km hingga 10 km. Zona persaingan yang Anda pedulikan." },
+  { num: "04", title: "Baca dashboard Anda",    desc: "Skor BVI, peta pesaing, SWOT, dan roadmap strategis, seketika." },
 ];
 
 const features = [
-  { num: "01", title: "Location intelligence",  desc: "Drop a pin and instantly scan your competitive landscape within a custom radius." },
-  { num: "02", title: "Identify your gap",        desc: "Analyzes competitors and generates a SWOT tailored to your business." },
-  { num: "03", title: "BVI score",              desc: "A predictive viability score based on competition density and location signals." },
-  { num: "04", title: "Strategic roadmap",      desc: "Actionable moves on differentiation, pricing, and where to spend on marketing." },
-  { num: "05", title: "Data-driven decisions",  desc: "Real-time Google Places data — accurate competitor intelligence, no guesswork." },
-  { num: "06", title: "Visual analytics",       desc: "Charts and dashboards that communicate the insight at a glance." },
+  { num: "01", title: "Intelijen Lokasi",        desc: "Tandai pin dan langsung scan lanskap persaingan dalam radius pilihan Anda." },
+  { num: "02", title: "Identifikasi Celah Anda", desc: "Menganalisis pesaing dan menghasilkan SWOT khusus bisnis Anda." },
+  { num: "03", title: "Skor BVI",                desc: "Skor kelayakan prediktif berdasarkan kepadatan persaingan dan sinyal lokasi." },
+  { num: "04", title: "Roadmap Strategis",       desc: "Langkah nyata soal diferensiasi, harga, dan alokasi anggaran pemasaran." },
+  { num: "05", title: "Keputusan Berbasis Data", desc: "Data Google Places real-time. Intelijen pesaing yang akurat, tanpa tebak-tebakan." },
+  { num: "06", title: "Analitik Visual",         desc: "Grafik dan dashboard yang menyampaikan insight dalam sekejap." },
 ];
 
 /* ──────────────────────────────────────────────────────────────────────────
@@ -86,7 +86,7 @@ function FloatingScorePreview() {
             fontSize: 12, lineHeight: 1.3, fontWeight: 500,
             color: "var(--deep)",
           }}>
-            Moderately viable — differentiation will be key.
+            Cukup layak. Diferensiasi adalah kuncinya.
           </div>
         </div>
       </div>
@@ -140,12 +140,13 @@ function LandingNav() {
           </Link>
 
           <div className="landing-nav-actions" style={{ display: "flex", alignItems: "center", gap: "1.4rem" }}>
-            <a href="#how"      className="mono-nav hover:opacity-60 nav-anchor">How</a>
-            <a href="#features" className="mono-nav hover:opacity-60 nav-anchor">Features</a>
-            <a href="#start"    className="mono-nav hover:opacity-60 nav-anchor">Start</a>
-            <Link to="/auth" className="mono-nav nav-anchor" style={{ opacity: 0.7 }}>Log in</Link>
+            <a href="#how"      className="mono-nav hover:opacity-60 nav-anchor">Cara Kerja</a>
+            <a href="#features" className="mono-nav hover:opacity-60 nav-anchor">Fitur</a>
+            <Link to="/about"   className="mono-nav hover:opacity-60 nav-anchor">Tentang</Link>
+            <a href="#start"    className="mono-nav hover:opacity-60 nav-anchor">Mulai</a>
+            <Link to="/auth" className="mono-nav nav-anchor" style={{ opacity: 0.7 }}>Masuk</Link>
             <HexButton as="a" href="/auth?mode=register" variant="solid">
-              Get started <ArrowRight size={14} />
+              Mulai sekarang <ArrowRight size={14} />
             </HexButton>
           </div>
         </div>
@@ -166,8 +167,6 @@ function StepCard({
 }) {
   const [hovered, setHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [textWidth, setTextWidth] = useState<number | null>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
   const Demo = stepPreviews[index];
 
   useEffect(() => {
@@ -178,34 +177,15 @@ function StepCard({
     return () => mq.removeEventListener("change", update);
   }, []);
 
-  /* Freeze the text column at the collapsed card width so it never reflows —
-     when a card shrinks, the card edge clips the text instead of resizing it. */
-  useLayoutEffect(() => {
-    if (isMobile) { setTextWidth(null); return; }
-    const measure = () => {
-      const el = cardRef.current;
-      if (!el || hovered) return;
-      const cs = getComputedStyle(el);
-      const pad = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
-      setTextWidth(el.clientWidth - pad);
-    };
-    measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, [isMobile, hovered]);
-
   /* On touch/mobile there's no hover — the demo is always shown, stacked below. */
   const expanded = isMobile || hovered;
 
   const textColStyle: React.CSSProperties = isMobile
     ? { flex: "0 0 auto", width: "100%" }
-    : textWidth != null
-      ? { flex: "0 0 auto", width: textWidth }
-      : { flex: "1 1 0%", minWidth: 0 };
+    : { flex: "1 1 0%", minWidth: 0, maxWidth: "100%" };
 
   return (
     <motion.div
-      ref={cardRef}
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -226,17 +206,27 @@ function StepCard({
         cursor: "default",
       }}
     >
-      {/* Text column — frozen width on desktop so it clips rather than reflows */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "1rem", ...textColStyle }}>
+      {/* Text column flexes with the card so collapsed text shrinks cleanly. */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: expanded ? "1rem" : "0.75rem",
+          overflow: "hidden",
+          transition: "gap 0.3s ease",
+          ...textColStyle,
+        }}
+      >
         <MonoLabel size="xs" tone="ink" style={{ opacity: 0.55 }}>{step.num}</MonoLabel>
         <div
           className="font-display"
           style={{
-            fontSize: "clamp(2.4rem, 4vw, 3.6rem)",
+            fontSize: expanded ? "3.2rem" : "2.35rem",
             fontWeight: 800,
             lineHeight: 0.95,
             letterSpacing: "-0.04em",
             color: "var(--deep)",
+            transition: "font-size 0.3s ease",
           }}
         >
           {step.num}
@@ -244,15 +234,27 @@ function StepCard({
         <div
           style={{
             fontFamily: "'Inter', system-ui, sans-serif",
-            fontSize: "1.05rem",
+            fontSize: expanded ? "1.05rem" : "0.95rem",
             fontWeight: 600,
             lineHeight: 1.2,
             color: "var(--deep)",
+            overflowWrap: "anywhere",
+            transition: "font-size 0.3s ease",
           }}
         >
           {step.title}
         </div>
-        <p className="serif-body" style={{ fontSize: "0.92rem", lineHeight: 1.5, opacity: 0.78 }}>
+        <p
+          className="serif-body"
+          style={{
+            fontSize: expanded ? "0.92rem" : "0.82rem",
+            lineHeight: 1.45,
+            opacity: expanded ? 0.78 : 0.62,
+            maxHeight: expanded ? "7rem" : "3.6rem",
+            overflow: "hidden",
+            transition: "font-size 0.3s ease, max-height 0.3s ease, opacity 0.3s ease",
+          }}
+        >
           {step.desc}
         </p>
 
@@ -263,7 +265,7 @@ function StepCard({
             fontSize: 9, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase",
             color: "var(--deep)", opacity: 0.5,
           }}>
-            {isMobile ? "Step preview" : hovered ? "Live preview" : "Hover to preview"}
+            {isMobile ? "Pratinjau langkah" : hovered ? "Pratinjau langsung" : "Arahkan untuk melihat"}
           </span>
         </div>
       </div>
@@ -325,12 +327,12 @@ export default function LandingPage() {
                   display: "inline-block", width: 6, height: 6,
                   borderRadius: 999, background: "var(--bright)",
                 }} />
-                AI Business Location Intelligence
+                AI Intelijen Lokasi Bisnis
               </span>
             </div>
 
             <h1 className="display-hero">
-              Know before<br />you open.
+              Tahu sebelum<br />kamu buka.
             </h1>
 
             <p
@@ -343,8 +345,8 @@ export default function LandingPage() {
                 color: "color-mix(in srgb, var(--deep) 75%, transparent)",
               }}
             >
-              AP Analytics evaluates your business location using real competitor
-              data and AI-generated strategic insights — completely free.
+              AP Analytics mengevaluasi lokasi bisnis Anda menggunakan data pesaing nyata
+              dan wawasan strategis dari AI, sepenuhnya gratis.
             </p>
 
             <div
@@ -379,10 +381,10 @@ export default function LandingPage() {
               }}
             >
               <HexButton as="a" href="/auth?mode=register" variant="solid">
-                Start free analysis <ArrowRight size={14} />
+                Mulai analisis gratis <ArrowRight size={14} />
               </HexButton>
               <HexButton as="a" href="#how" variant="outline">
-                How it works
+                Cara kerjanya
               </HexButton>
             </div>
 
@@ -430,7 +432,7 @@ export default function LandingPage() {
 
         {/* ── What it is ──────────────────────────────────────────────── */}
         <section id="about" className="compartment">
-          <SectionEyebrow anchor="WHAT IT IS" label="01 / 04" />
+          <SectionEyebrow anchor="APA INI" label="01 / 04" />
 
           <div
             style={{
@@ -448,7 +450,7 @@ export default function LandingPage() {
               transition={{ duration: 0.6 }}
               className="display-xl"
             >
-              A predictive viability engine for the spot you're about to bet on.
+              Mesin kelayakan prediktif untuk lokasi yang akan Anda pertaruhkan.
             </motion.h2>
 
             <motion.div
@@ -460,17 +462,17 @@ export default function LandingPage() {
               style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}
             >
               <p className="serif-body" style={{ color: "var(--deep)" }}>
-                AP Analytics turns the messy question "is this location any good?" into a
-                single number, a competitive map, and a strategic plan you can act on.
+                AP Analytics mengubah pertanyaan rumit "apakah lokasi ini bagus?" menjadi
+                satu angka, peta persaingan, dan rencana strategis yang bisa langsung dijalankan.
               </p>
               <p className="serif-body" style={{ color: "color-mix(in srgb, var(--deep) 72%, transparent)" }}>
-                Built for Indonesian UMKM founders who can't afford a market-research
-                firm but can't afford to guess either. Drop a pin. Set a radius. Get
-                everything a consultant would have charged you for.
+                Dibuat untuk pendiri UMKM Indonesia yang tidak mampu menyewa konsultan riset pasar,
+                tapi juga tidak bisa asal tebak. Tandai pin. Atur radius. Dapatkan semua yang
+                biasanya ditagih oleh konsultan.
               </p>
               <div style={{ marginTop: "0.4rem" }}>
                 <HexButton as="a" href="#start" variant="outline">
-                  See it in action <ArrowUpRight size={14} />
+                  Lihat aksinya <ArrowUpRight size={14} />
                 </HexButton>
               </div>
             </motion.div>
@@ -479,7 +481,7 @@ export default function LandingPage() {
 
         {/* ── How it works ────────────────────────────────────────────── */}
         <section id="how" className="compartment">
-          <SectionEyebrow anchor="HOW IT WORKS" label="02 / 04" />
+          <SectionEyebrow anchor="CARA KERJA" label="02 / 04" />
 
           <motion.h2
             initial={{ opacity: 0, y: 14 }}
@@ -488,7 +490,7 @@ export default function LandingPage() {
             className="display-xl"
             style={{ maxWidth: 820, marginBottom: "2.4rem" }}
           >
-            Four steps. One report. About a minute.
+            Empat langkah. Satu laporan. Sekitar satu menit.
           </motion.h2>
 
           <div
@@ -507,7 +509,7 @@ export default function LandingPage() {
 
         {/* ── Features ────────────────────────────────────────────────── */}
         <section id="features" className="compartment">
-          <SectionEyebrow anchor="WHAT YOU GET" label="03 / 04" />
+          <SectionEyebrow anchor="APA YANG ANDA DAPAT" label="03 / 04" />
 
           <motion.h2
             initial={{ opacity: 0, y: 14 }}
@@ -516,7 +518,7 @@ export default function LandingPage() {
             className="display-xl"
             style={{ maxWidth: 820, marginBottom: "2.4rem" }}
           >
-            Everything a location consultant would charge you for.
+            Semua yang biasanya ditagih oleh konsultan lokasi.
           </motion.h2>
 
           <div
@@ -581,10 +583,10 @@ export default function LandingPage() {
               }}
             >
               <span style={{ display: "inline-block", width: 6, height: 6, borderRadius: 999, background: "var(--bright)" }} />
-              START NOW · 04 / 04
+              MULAI SEKARANG · 04 / 04
             </span>
             <h2 className="display-hero" style={{ maxWidth: 1100, margin: "0 auto", color: "var(--deep)" }}>
-              Analyze your<br />location today.
+              Analisis lokasi<br />Anda hari ini.
             </h2>
             <p
               className="serif-body"
@@ -596,8 +598,8 @@ export default function LandingPage() {
                 color: "color-mix(in srgb, var(--deep) 78%, transparent)",
               }}
             >
-              Free. No credit card. Instant report. Join the UMKM founders
-              who make location decisions on data, not vibes.
+              Gratis. Tanpa kartu kredit. Laporan instan. Bergabunglah dengan pendiri
+              UMKM yang mengambil keputusan lokasi berdasarkan data, bukan perasaan.
             </p>
             <div
               style={{
@@ -607,12 +609,12 @@ export default function LandingPage() {
               }}
             >
               <HexButton as="a" href="/auth?mode=register" variant="solid">
-                Get started for free <ArrowRight size={14} />
+                Mulai gratis <ArrowRight size={14} />
               </HexButton>
               <HexButton
                 as="a" href="/auth" variant="outline"
               >
-                Sign in
+                Masuk
               </HexButton>
             </div>
           </motion.div>
@@ -634,9 +636,10 @@ export default function LandingPage() {
             © 2026 AP Analytics · Team Balkon · FindIT! 2026
           </MonoLabel>
           <div style={{ display: "flex", gap: "1.4rem" }}>
-            <a href="#how"      className="mono-nav hover:opacity-60">How</a>
-            <a href="#features" className="mono-nav hover:opacity-60">Features</a>
-            <a href="#start"    className="mono-nav hover:opacity-60">Start</a>
+            <a href="#how"      className="mono-nav hover:opacity-60">Cara Kerja</a>
+            <a href="#features" className="mono-nav hover:opacity-60">Fitur</a>
+            <Link to="/about"   className="mono-nav hover:opacity-60">Tentang</Link>
+            <a href="#start"    className="mono-nav hover:opacity-60">Mulai</a>
           </div>
         </footer>
 

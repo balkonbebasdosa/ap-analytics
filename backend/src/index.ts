@@ -1,14 +1,16 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
-import dotenv from "dotenv";
 import authRoutes from "./routes/auth";
 import businessRoutes from "./routes/business";
 import analyzeRoutes from "./routes/analyze";
 import zoneRoutes from "./routes/zone";
+import menuImportRoutes from "./routes/menuImport";
 
-dotenv.config();
 
 /* ── Startup: fail fast on missing required env vars ────────────────────── */
 const REQUIRED_ENV = ["DATABASE_URL", "JWT_SECRET", "GOOGLE_MAPS_API_KEY"] as const;
@@ -26,6 +28,7 @@ app.use(helmet());
 const allowedOrigins = [
   process.env.FRONTEND_URL || "http://localhost:5173",
   "http://localhost:5173",
+  "http://localhost:5174",
 ];
 app.use(cors({
   origin: (origin, callback) => {
@@ -46,6 +49,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/business", businessRoutes);
 app.use("/api/analyze", analyzeRoutes);
 app.use("/api/zone", zoneRoutes);
+app.use("/api/menu-import", menuImportRoutes);
 
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });

@@ -41,9 +41,9 @@ export function getScoreTier(score: number): {
 }
 
 export function getScoreLabel(score: number): string {
-  if (score >= 80) return "Highly Viable";
-  if (score >= 65) return "Viable";
-  if (score >= 50) return "Moderately Viable";
-  if (score >= 35) return "Challenging";
-  return "High Risk";
+  if (score >= 80) return "Sangat Layak";
+  if (score >= 65) return "Layak";
+  if (score >= 50) return "Cukup Layak";
+  if (score >= 35) return "Menantang";
+  return "Risiko Tinggi";
 }
