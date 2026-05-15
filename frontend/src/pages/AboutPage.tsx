@@ -1,19 +1,16 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, User } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { HexButton } from "@/components/ui/HexButton";
 import { PaletteScope } from "@/components/ui/PaletteScope";
 import { SectionEyebrow, MonoLabel } from "@/components/ui/MonoLabel";
 
-/* ──────────────────────────────────────────────────────────────────────────
-   Content — founder names/roles are placeholders, swap with real data.
-   ────────────────────────────────────────────────────────────────────── */
 const founders = [
-  { name: "Nama Pendiri 1", role: "Co-Founder" },
-  { name: "Nama Pendiri 2", role: "Co-Founder" },
-  { name: "Nama Pendiri 3", role: "Co-Founder" },
-  { name: "Nama Pendiri 4", role: "Co-Founder" },
-  { name: "Nama Pendiri 5", role: "Co-Founder" },
+  { name: "Adit",    role: "Co-Founder", photo: "/images/foto adit.jpg"    },
+  { name: "Davin",   role: "Co-Founder", photo: "/images/foto davin.jpg"   },
+  { name: "Gabriel", role: "Co-Founder", photo: "/images/foto gabriel.jpg" },
+  { name: "Gunta",   role: "Co-Founder", photo: "/images/foto gunta.jpg"   },
+  { name: "Rafi",    role: "Co-Founder", photo: "/images/foto rafi.jpg"    },
 ];
 
 /* ──────────────────────────────────────────────────────────────────────────
@@ -68,7 +65,6 @@ function FounderCard({ founder, delay }: { founder: (typeof founders)[number]; d
       className="compartment-inner"
       style={{ display: "flex", flexDirection: "column", gap: "0.9rem", padding: "1rem" }}
     >
-      {/* Photo frame placeholder — swap for an <img> when photos are ready */}
       <div
         style={{
           aspectRatio: "1 / 1",
@@ -78,7 +74,11 @@ function FounderCard({ founder, delay }: { founder: (typeof founders)[number]; d
           overflow: "hidden",
         }}
       >
-        <User size={44} strokeWidth={1.5} style={{ color: "var(--deep)", opacity: 0.28 }} />
+        <img
+          src={founder.photo}
+          alt={founder.name}
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+        />
       </div>
 
       <div>
