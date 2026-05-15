@@ -15,7 +15,7 @@ import { stepPreviews } from "@/components/landing/StepPreviews";
 const stats = [
   { value: "0.5–10km", label: "Jangkauan scan" },
   { value: "Real-time", label: "Data tempat" },
-  { value: "0 IDR",    label: "Selamanya" },
+  { value: "Rp 0",     label: "Untuk mulai" },
 ];
 
 const steps = [
@@ -103,7 +103,7 @@ function FloatingSticker() {
       className="animate-float-sticky pointer-events-none absolute right-8 top-24 z-10 hidden lg:block xl:right-24"
     >
       <span className="pill-mono" style={{ background: "var(--deep)", color: "var(--bright)" }}>
-        gratis selamanya ✦
+        mulai gratis ✦
       </span>
     </motion.div>
   );
@@ -142,8 +142,8 @@ function LandingNav() {
           <div className="landing-nav-actions" style={{ display: "flex", alignItems: "center", gap: "1.4rem" }}>
             <a href="#how"      className="mono-nav hover:opacity-60 nav-anchor">Cara Kerja</a>
             <a href="#features" className="mono-nav hover:opacity-60 nav-anchor">Fitur</a>
+            <Link to="/pricing" className="mono-nav hover:opacity-60 nav-anchor">Harga</Link>
             <Link to="/about"   className="mono-nav hover:opacity-60 nav-anchor">Tentang</Link>
-            <a href="#start"    className="mono-nav hover:opacity-60 nav-anchor">Mulai</a>
             <Link to="/auth" className="mono-nav nav-anchor" style={{ opacity: 0.7 }}>Masuk</Link>
             <HexButton as="a" href="/auth?mode=register" variant="solid">
               Mulai sekarang <ArrowRight size={14} />
@@ -636,10 +636,10 @@ export default function LandingPage() {
             © 2026 AP Analytics · Team Balkon · FindIT! 2026
           </MonoLabel>
           <div style={{ display: "flex", gap: "1.4rem" }}>
-            <a href="#how"      className="mono-nav hover:opacity-60">Cara Kerja</a>
-            <a href="#features" className="mono-nav hover:opacity-60">Fitur</a>
-            <Link to="/about"   className="mono-nav hover:opacity-60">Tentang</Link>
-            <a href="#start"    className="mono-nav hover:opacity-60">Mulai</a>
+            <a href="#how"        className="mono-nav hover:opacity-60">Cara Kerja</a>
+            <a href="#features"   className="mono-nav hover:opacity-60">Fitur</a>
+            <Link to="/pricing"   className="mono-nav hover:opacity-60">Harga</Link>
+            <Link to="/about"     className="mono-nav hover:opacity-60">Tentang</Link>
           </div>
         </footer>
 
