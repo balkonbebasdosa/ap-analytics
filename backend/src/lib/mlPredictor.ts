@@ -3,6 +3,7 @@ import path from "path";
 import { EventEmitter } from "events";
 import { fetchZoneLive, type ZoneResult } from "./zoneService";
 import { getBusinessFeedback } from "./feedbackGenerator";
+import { getDetailedStrategy } from "./businessStrategy";
 
 export type { ZoneResult };
 
@@ -129,26 +130,24 @@ export async function runMLAnalysis(input: MLAnalysisInput): Promise<AnalysisRes
       const pythonZone = result.zone as ZoneResult | undefined;
       const { lat, lng } = input.location;
 
+      const bviScore = Math.round(preds.success_score);
+      const strategy = getDetailedStrategy(input.category, bviScore);
+
       const baseResult: AnalysisResult = {
-        successScore: Math.round(preds.success_score),
+        successScore: bviScore,
         scoreBreakdown: {
           competitionDensity: Math.round(preds.competition_density_score),
           locationAppeal: Math.round(preds.location_appeal_score),
           marketDemand: Math.round(preds.market_demand_score),
           conceptUniqueness: Math.round(preds.concept_uniqueness_score),
         },
-        swot: {
-          strengths: ["Konsep tervalidasi secara lokal", "Positioning berbasis data"],
-          weaknesses: ["Perlu pemantauan pasar berkelanjutan", "Risiko sebagai pemain baru"],
-          opportunities: ["Permintaan lokal teridentifikasi", "Peluang untuk penawaran unik"],
-          threats: ["Persaingan lokal yang sudah ada", "Perubahan preferensi konsumen"],
-        },
+        swot: strategy.swot,
         strategicRoadmap: {
-          differentiation: ["Tekankan aspek unik dari konsep bisnis Anda"],
-          pricing: ["Pantau rata-rata harga lokal secara cermat"],
-          marketing: ["Fokus pada promosi yang relevan untuk area sekitar"],
+          differentiation: [strategy.advices[0]],
+          pricing: [strategy.advices[1]],
+          marketing: [strategy.advices[2]],
         },
-        summary: getBusinessFeedback(input.concept, Math.round(preds.success_score)),
+        summary: getBusinessFeedback(input.concept, bviScore),
         zone: pythonZone,
       };
 
