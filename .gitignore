@@ -27,3 +27,6 @@ backend/data/jakarta_rtrw.geojson
 .DS_Store
 Thumbs.db
 .vercel
+
+# Local-only test files
+examples/
