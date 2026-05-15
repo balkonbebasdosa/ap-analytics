@@ -13,16 +13,16 @@ const tiers = [
     id: "free",
     name: "Free",
     price: "Rp 0",
-    period: "to start",
-    blurb: "Everything you need to validate your first locations. No card required.",
+    period: "untuk mulai",
+    blurb: "Semua yang kamu butuhkan untuk memvalidasi lokasi pertamamu. Tanpa kartu kredit.",
     features: [
-      "3 location analyses",
-      "BVI viability score & breakdown",
-      "AI-powered SWOT analysis",
-      "Competitor map & ranked list",
-      "Strategic roadmap",
+      "3 analisis lokasi",
+      "Skor kelayakan BVI & rincian",
+      "Analisis SWOT berbasis AI",
+      "Peta pesaing & daftar ranking",
+      "Peta jalan strategis",
     ],
-    cta: "Get started free",
+    cta: "Mulai gratis",
     href: "/auth?mode=register",
     featured: false,
   },
@@ -30,16 +30,16 @@ const tiers = [
     id: "pro",
     name: "Pro",
     price: "Rp 25.000",
-    period: "month",
-    blurb: "For founders comparing many sites. Analyze as much as you need.",
+    period: "bulan",
+    blurb: "Untuk pendiri yang membandingkan banyak lokasi. Analisis sebanyak yang kamu butuhkan.",
     features: [
-      "Unlimited location analyses",
-      "Everything in Free",
-      "Full analysis history",
-      "Export reports to PDF",
-      "Priority AI processing",
+      "Analisis lokasi tak terbatas",
+      "Semua fitur di Free",
+      "Riwayat analisis lengkap",
+      "Ekspor laporan ke PDF",
+      "Pemrosesan AI prioritas",
     ],
-    cta: "Get started with Pro",
+    cta: "Mulai dengan Pro",
     href: "/auth?mode=register",
     featured: true,
   },
@@ -69,12 +69,13 @@ function PricingNav() {
           </Link>
 
           <div className="landing-nav-actions" style={{ display: "flex", alignItems: "center", gap: "1.4rem" }}>
-            <Link to="/#how"      className="mono-nav hover:opacity-60 nav-anchor">How</Link>
-            <Link to="/#features" className="mono-nav hover:opacity-60 nav-anchor">Features</Link>
-            <Link to="/pricing"   className="mono-nav nav-anchor">Pricing</Link>
-            <Link to="/auth" className="mono-nav nav-anchor" style={{ opacity: 0.7 }}>Log in</Link>
+            <Link to="/#how"      className="mono-nav hover:opacity-60 nav-anchor">Cara Kerja</Link>
+            <Link to="/#features" className="mono-nav hover:opacity-60 nav-anchor">Fitur</Link>
+            <Link to="/pricing"   className="mono-nav nav-anchor">Harga</Link>
+            <Link to="/about"     className="mono-nav hover:opacity-60 nav-anchor">Tentang</Link>
+            <Link to="/auth" className="mono-nav nav-anchor" style={{ opacity: 0.7 }}>Masuk</Link>
             <HexButton as="a" href="/auth?mode=register" variant="solid">
-              Get started <ArrowRight size={14} />
+              Mulai sekarang <ArrowRight size={14} />
             </HexButton>
           </div>
         </div>
@@ -113,7 +114,7 @@ function PricingCard({ tier, delay }: { tier: (typeof tiers)[number]; delay: num
           }}
         >
           <span style={{ display: "inline-block", width: 6, height: 6, borderRadius: 999, background: "var(--bright)" }} />
-          Most popular
+          Paling populer
         </span>
       )}
 
@@ -217,7 +218,7 @@ export default function PricingPage() {
       >
         {/* ── Header ─────────────────────────────────────────────────────── */}
         <section className="compartment" style={{ textAlign: "center" }}>
-          <SectionEyebrow anchor="PRICING" label="Plans" />
+          <SectionEyebrow anchor="HARGA" label="Paket" />
 
           <motion.h1
             initial={{ opacity: 0, y: 14 }}
@@ -226,7 +227,7 @@ export default function PricingPage() {
             className="display-hero"
             style={{ marginTop: "0.4rem" }}
           >
-            Start free.<br />Upgrade when you scale.
+            Mulai gratis.<br />Tingkatkan saat kamu berkembang.
           </motion.h1>
 
           <p
@@ -239,8 +240,8 @@ export default function PricingPage() {
               color: "color-mix(in srgb, var(--deep) 75%, transparent)",
             }}
           >
-            Two plans, one goal: making location decisions on data, not vibes.
-            No hidden fees, cancel anytime.
+            Dua paket, satu tujuan: keputusan lokasi berdasarkan data, bukan insting.
+            Tanpa biaya tersembunyi, batalkan kapan saja.
           </p>
         </section>
 
@@ -269,7 +270,7 @@ export default function PricingPage() {
               color: "color-mix(in srgb, var(--deep) 60%, transparent)",
             }}
           >
-            Prices in Indonesian Rupiah. Pro billing is monthly, cancel any time.
+            Harga dalam Rupiah Indonesia. Tagihan Pro bulanan, batalkan kapan saja.
           </p>
         </section>
 
@@ -281,7 +282,7 @@ export default function PricingPage() {
             viewport={{ once: true }}
           >
             <h2 className="display-xl" style={{ maxWidth: 720, margin: "0 auto", color: "var(--deep)" }}>
-              Still deciding? Start with the free plan.
+              Masih ragu? Mulai dengan paket gratis.
             </h2>
             <p
               className="serif-body"
@@ -293,14 +294,14 @@ export default function PricingPage() {
                 color: "color-mix(in srgb, var(--deep) 78%, transparent)",
               }}
             >
-              Run your first three analyses on us. Upgrade to Pro the moment you need more.
+              Jalankan tiga analisis pertamamu secara gratis. Tingkatkan ke Pro saat kamu butuh lebih.
             </p>
             <div style={{ marginTop: "2rem", display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "0.8rem" }}>
               <HexButton as="a" href="/auth?mode=register" variant="solid">
-                Get started free <ArrowRight size={14} />
+                Mulai gratis <ArrowRight size={14} />
               </HexButton>
               <HexButton as="a" href="/" variant="outline">
-                Back to home
+                Kembali ke beranda
               </HexButton>
             </div>
           </motion.div>
@@ -322,9 +323,10 @@ export default function PricingPage() {
             © 2026 AP Analytics · Team Balkon · FindIT! 2026
           </MonoLabel>
           <div style={{ display: "flex", gap: "1.4rem" }}>
-            <Link to="/#how"      className="mono-nav hover:opacity-60">How</Link>
-            <Link to="/#features" className="mono-nav hover:opacity-60">Features</Link>
-            <Link to="/pricing"   className="mono-nav hover:opacity-60">Pricing</Link>
+            <Link to="/#how"      className="mono-nav hover:opacity-60">Cara Kerja</Link>
+            <Link to="/#features" className="mono-nav hover:opacity-60">Fitur</Link>
+            <Link to="/pricing"   className="mono-nav hover:opacity-60">Harga</Link>
+            <Link to="/about"     className="mono-nav hover:opacity-60">Tentang</Link>
           </div>
         </footer>
       </main>

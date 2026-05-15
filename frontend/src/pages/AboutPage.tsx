@@ -218,9 +218,10 @@ export default function AboutPage() {
             © 2026 AP Analytics · Team Balkon · FindIT! 2026
           </MonoLabel>
           <div style={{ display: "flex", gap: "1.4rem" }}>
-            <Link to="/#how"    className="mono-nav hover:opacity-60">Cara Kerja</Link>
-            <Link to="/pricing" className="mono-nav hover:opacity-60">Harga</Link>
-            <Link to="/about"   className="mono-nav hover:opacity-60">Tentang</Link>
+            <Link to="/#how"      className="mono-nav hover:opacity-60">Cara Kerja</Link>
+            <Link to="/#features" className="mono-nav hover:opacity-60">Fitur</Link>
+            <Link to="/pricing"   className="mono-nav hover:opacity-60">Harga</Link>
+            <Link to="/about"     className="mono-nav hover:opacity-60">Tentang</Link>
           </div>
         </footer>
       </main>
