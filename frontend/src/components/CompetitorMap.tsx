@@ -178,7 +178,7 @@ export default function CompetitorMap({ latitude, longitude, radiusMeters, compe
       for (const m of markersRef.current) m.setMap(null);
       markersRef.current = [];
     };
-  }, [latitude, longitude, radiusMeters, competitors, zone]);
+  }, [isLoaded, latitude, longitude, radiusMeters, competitors, zone]);
 
   if (loadError) {
     return (
